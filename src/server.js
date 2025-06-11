@@ -15,11 +15,13 @@ app.get("/webhook", webhookGet);
 app.post("/webhook", webhookPost);
 
 app.get("/test", async (req, res) => {
-  await sendMessage({
-    phone: `${process.env.MY_PHONE_NUMBER_ID}`,
-    text: "Holla , we are just testing here",
-  });
-  res.send("Message sent");
+  const phone = req.query.phone;
+  if (!phone) {
+    return res.status(400).send("Missing ?phone= parameter");
+  }
+
+  await sendMessage({ phone, text: "Test message" });
+  res.send(`Message sent to ${phone}`);
 });
 
 const PORT = process.env.PORT || 3000;
