@@ -9,20 +9,19 @@ export async function sendMessage({ phone, text }) {
     text: { body: text },
   };
 
-  const response = await callWhatsAppAPI({
-    url: `https://graph.facebook.com/v19.0/${process.env.PHONE_NUMBER_ID}/messages`,
-    body: payload,
-  });
+  try {
+    const result = await callWhatsAppAPI({
+      url: `https://graph.facebook.com/v19.0/${process.env.PHONE_NUMBER_ID}/messages`,
+      body: payload,
+    });
 
-  const result = await response.json();
+    // Log outbound message
+    await logOutbound({ phone, text, result });
+    console.log("📤 Outbound message logged:", result);
 
-  if (!response.ok) {
-    throw new Error(
-      `Send failed: ${response.status} - ${JSON.stringify(result)}`
-    );
+    return result;
+  } catch (error) {
+    console.error("❌ Failed to send message:", error);
+    throw error;
   }
-
-  // Log outbound message
-  await logOutbound({ phone, text, result });
-  console.log("📤 Outbound message logged:", result);
 }

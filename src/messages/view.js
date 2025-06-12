@@ -1,7 +1,24 @@
 import express from "express";
-import { getMessagesByPhone, getMessageCountByPhone } from "../lib/messages.js";
+import { getMessagesByPhone } from "../lib/messages.js";
 
 const router = express.Router();
+
+/**
+ * Format message for response
+ * @param {Object} message - Message from database
+ * @param {string} phone - Phone number being queried
+ * @returns {Object} Formatted message
+ */
+function formatMessage(message, phone) {
+  const isInbound = message.from === phone;
+
+  return {
+    from: isInbound ? message.from : "system",
+    ...(isInbound ? {} : { to: message.to }),
+    text: { body: message.text },
+    direction: isInbound ? "inbound" : "outbound",
+  };
+}
 
 /**
  * GET /api/logs/:phone
@@ -19,16 +36,10 @@ router.get("/:phone", async (req, res) => {
       sortOrder: sortOrder ? parseInt(sortOrder) : undefined,
     });
 
-    const total = await getMessageCountByPhone(phone);
+    // Format messages for response
+    const formattedMessages = messages.map((msg) => formatMessage(msg, phone));
 
-    res.json({
-      success: true,
-      data: {
-        messages,
-        total,
-        phone,
-      },
-    });
+    res.json(formattedMessages);
   } catch (error) {
     console.error("Error fetching messages:", error);
     res.status(500).json({
@@ -61,16 +72,10 @@ router.get("/", async (req, res) => {
       sortOrder: sortOrder ? parseInt(sortOrder) : undefined,
     });
 
-    const total = await getMessageCountByPhone(phone);
+    // Format messages for response
+    const formattedMessages = messages.map((msg) => formatMessage(msg, phone));
 
-    res.json({
-      success: true,
-      data: {
-        messages,
-        total,
-        phone,
-      },
-    });
+    res.json(formattedMessages);
   } catch (error) {
     console.error("Error fetching messages:", error);
     res.status(500).json({
