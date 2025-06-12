@@ -5,8 +5,8 @@ import webhookGet from "./webhook/get.js";
 import webhookPost from "./webhook/post.js";
 import { sendMessage } from "./messages/send.js";
 import logsRouter from "./messages/view.js";
+import { requireAuth } from "./middleware/auth.js";
 import rateLimit from "express-rate-limit";
-
 dotenv.config();
 connectDB();
 
@@ -22,11 +22,11 @@ app.use(express.json());
 app.get("/webhook", webhookLimiter, webhookGet);
 app.post("/webhook", webhookLimiter, webhookPost);
 
-// Message logs routes
-app.use("/api/logs", webhookLimiter, logsRouter);
+// Protected routes
+app.use("/api/logs", requireAuth, logsRouter);
 
-// Test route
-app.get("/test", webhookLimiter, async (req, res) => {
+// Test route (protected)
+app.get("/test", requireAuth, async (req, res) => {
   const phone = req.query.phone;
   if (!phone) {
     return res.status(400).send("Missing ?phone= parameter");

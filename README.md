@@ -11,6 +11,7 @@ A clean and modular Node.js starter for WhatsApp Cloud API integration, using:
 - ✅ Vitest for testing
 - ✅ Message logging and persistence
 - ✅ Phone number normalization
+- ✅ Bearer token authentication
 
 ---
 
@@ -20,6 +21,7 @@ A clean and modular Node.js starter for WhatsApp Cloud API integration, using:
 src/
   ├── config/       # DB connection
   ├── lib/          # Shared utilities
+  ├── middleware/   # Express middleware
   ├── messages/     # WhatsApp messaging logic
   ├── models/       # Database models
   ├── webhook/      # Incoming & verification logic
@@ -46,6 +48,7 @@ VERIFY_TOKEN=your_verify_token
 WHATSAPP_TOKEN=your_long_lived_token
 PHONE_NUMBER_ID=your_phone_number_id
 MONGO_URI=mongodb://localhost:27017/whatsapp
+API_TOKEN=your_api_token_here  # For protected routes
 ```
 
 ### 3. Run the App
@@ -74,7 +77,7 @@ npm run test
 
 ## 📫 API Endpoints
 
-### ✅ Webhook Verification
+### ✅ Webhook Verification (Public)
 
 **GET** `/webhook`  
 Used by Meta's webhook verification process.
@@ -85,44 +88,19 @@ Query parameters:
 - `hub.verify_token`
 - `hub.challenge`
 
-### 📥 Webhook Receive
+### 📥 Webhook Receive (Public)
 
 **POST** `/webhook`  
 Used to receive incoming messages. Automatically logs messages to database.
 
-Example Test in Postman:
-
-- Method: `POST`
-- URL: `http://localhost:3000/webhook`
-- Body (raw / JSON):
-
-```json
-{
-  "entry": [
-    {
-      "changes": [
-        {
-          "value": {
-            "messages": [
-              {
-                "from": "1234567890",
-                "text": {
-                  "body": "Hello"
-                }
-              }
-            ]
-          }
-        }
-      ]
-    }
-  ]
-}
-```
-
-### ✉️ Send Message
+### ✉️ Send Message (Protected)
 
 **GET** `/test`  
 Trigger a test message using `sendMessage()`.
+
+Headers:
+
+- `Authorization: Bearer your_api_token`
 
 Query parameters:
 
@@ -130,14 +108,18 @@ Query parameters:
 
 Example:
 
-```
-GET /test?phone=1234567890
+```bash
+curl -H "Authorization: Bearer your_api_token" "http://localhost:3000/test?phone=1234567890"
 ```
 
-### 📊 Message Logs
+### 📊 Message Logs (Protected)
 
 **GET** `/api/logs/:phone`  
 Get all messages for a specific phone number.
+
+Headers:
+
+- `Authorization: Bearer your_api_token`
 
 Query parameters:
 
@@ -148,25 +130,16 @@ Query parameters:
 
 Example:
 
-```
-GET /api/logs/1234567890?limit=10&skip=0&sortBy=createdAt&sortOrder=-1
-```
-
-Response:
-
-```json
-{
-  "success": true,
-  "data": {
-    "messages": [...],
-    "total": 123,
-    "phone": "1234567890"
-  }
-}
+```bash
+curl -H "Authorization: Bearer your_api_token" "http://localhost:3000/api/logs/1234567890?limit=10"
 ```
 
 **GET** `/api/logs`  
 Get messages with phone number as query parameter.
+
+Headers:
+
+- `Authorization: Bearer your_api_token`
 
 Query parameters:
 
@@ -178,9 +151,21 @@ Query parameters:
 
 Example:
 
+```bash
+curl -H "Authorization: Bearer your_api_token" "http://localhost:3000/api/logs?phone=1234567890&limit=10"
 ```
-GET /api/logs?phone=1234567890&limit=10
+
+---
+
+## 🔒 Authentication
+
+Protected routes require a Bearer token in the Authorization header:
+
+```bash
+Authorization: Bearer your_api_token
 ```
+
+The token is configured via the `API_TOKEN` environment variable.
 
 ---
 
