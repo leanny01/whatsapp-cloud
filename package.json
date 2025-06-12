@@ -10,12 +10,18 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "keywords": ["whatsapp", "cloud", "nodejs", "messaging"],
+  "keywords": [
+    "whatsapp",
+    "cloud",
+    "nodejs",
+    "messaging"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.3.1",
     "express": "^5.0.0",
+    "express-rate-limit": "^7.5.0",
     "mongoose": "^8.0.0"
   },
   "devDependencies": {

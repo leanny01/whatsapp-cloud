@@ -14,8 +14,6 @@ export async function callWhatsAppAPI({
   retryCount = 0,
 }) {
   try {
-    console.log(`📤 Making ${method} request to WhatsApp API: ${url}`);
-
     const res = await fetch(url, {
       method,
       headers: {
@@ -41,15 +39,12 @@ export async function callWhatsAppAPI({
       throw new WhatsAppAPIError("BAD_REQUEST", result);
     }
 
-    console.log("✅ WhatsApp API request successful");
     return result;
   } catch (error) {
     // Handle retry logic
     if (retryCount < MAX_RETRIES && (error.code === 429 || error.code >= 500)) {
       const delay = INITIAL_RETRY_DELAY * Math.pow(2, retryCount);
-      console.log(
-        `⚠️ Retrying request in ${delay}ms (attempt ${retryCount + 1}/${MAX_RETRIES})`
-      );
+
       await sleep(delay);
       return callWhatsAppAPI({ url, method, body, retryCount: retryCount + 1 });
     }

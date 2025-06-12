@@ -5,10 +5,11 @@ export default async function webhookPost(req, res) {
   const change = entry?.changes?.[0];
   const msg = change?.value?.messages?.[0];
 
-  if (msg) {
-    await logInbound(msg);
-    console.log("📥 Inbound message logged:", msg.text?.body);
+  if (!msg || !msg.type) {
+    console.warn("⚠️ Received malformed message:", req.body);
   }
+
+  await logInbound(msg);
 
   res.sendStatus(200);
 }
