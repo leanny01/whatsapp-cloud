@@ -9,6 +9,8 @@ A clean and modular Node.js starter for WhatsApp Cloud API integration, using:
 - ✅ GitHub Actions for CI
 - ✅ Vertical Slicing Architecture
 - ✅ Vitest for testing
+- ✅ Message logging and persistence
+- ✅ Phone number normalization
 
 ---
 
@@ -17,7 +19,9 @@ A clean and modular Node.js starter for WhatsApp Cloud API integration, using:
 ```
 src/
   ├── config/       # DB connection
+  ├── lib/          # Shared utilities
   ├── messages/     # WhatsApp messaging logic
+  ├── models/       # Database models
   ├── webhook/      # Incoming & verification logic
   └── server.js     # Main app
 ```
@@ -76,6 +80,7 @@ npm run test
 Used by Meta's webhook verification process.
 
 Query parameters:
+
 - `hub.mode`
 - `hub.verify_token`
 - `hub.challenge`
@@ -83,12 +88,14 @@ Query parameters:
 ### 📥 Webhook Receive
 
 **POST** `/webhook`  
-Used to receive incoming messages. Logs the JSON body.
+Used to receive incoming messages. Automatically logs messages to database.
 
 Example Test in Postman:
+
 - Method: `POST`
 - URL: `http://localhost:3000/webhook`
 - Body (raw / JSON):
+
 ```json
 {
   "entry": [
@@ -117,13 +124,81 @@ Example Test in Postman:
 **GET** `/test`  
 Trigger a test message using `sendMessage()`.
 
-> ⚠️ Replace the recipient number in `src/server.js` with your test phone number.
+Query parameters:
+
+- `phone`: Recipient's phone number (required)
+
+Example:
+
+```
+GET /test?phone=1234567890
+```
+
+### 📊 Message Logs
+
+**GET** `/api/logs/:phone`  
+Get all messages for a specific phone number.
+
+Query parameters:
+
+- `limit`: Number of messages to return (optional)
+- `skip`: Number of messages to skip (optional)
+- `sortBy`: Field to sort by (default: 'createdAt')
+- `sortOrder`: Sort order (1 for ascending, -1 for descending)
+
+Example:
+
+```
+GET /api/logs/1234567890?limit=10&skip=0&sortBy=createdAt&sortOrder=-1
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "messages": [...],
+    "total": 123,
+    "phone": "1234567890"
+  }
+}
+```
+
+**GET** `/api/logs`  
+Get messages with phone number as query parameter.
+
+Query parameters:
+
+- `phone`: Phone number to get messages for (required)
+- `limit`: Number of messages to return (optional)
+- `skip`: Number of messages to skip (optional)
+- `sortBy`: Field to sort by (default: 'createdAt')
+- `sortOrder`: Sort order (1 for ascending, -1 for descending)
+
+Example:
+
+```
+GET /api/logs?phone=1234567890&limit=10
+```
+
+---
+
+## 🔄 Message Logging Features
+
+- ✅ Automatic logging of inbound and outbound messages
+- ✅ Phone number normalization (removes '+' and leading '0')
+- ✅ Comprehensive phone number format matching
+- ✅ Pagination and sorting support
+- ✅ Message count tracking
+- ✅ Error handling and validation
 
 ---
 
 ## ✅ GitHub Actions
 
 CI runs on every push to `main`. It checks:
+
 - Dependency install
 - Linting (if added)
 - Test suite via Vitest
@@ -144,9 +219,10 @@ CI runs on every push to `main`. It checks:
 ## 📌 TODOs
 
 - [ ] Add Dockerfile
-- [ ] Add message persistence model (`MessageLog`)
 - [ ] Add webhook signature validation
 - [ ] Add user message replies
+- [ ] Add message search functionality
+- [ ] Add date range filtering for messages
 
 ---
 

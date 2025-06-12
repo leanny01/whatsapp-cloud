@@ -4,6 +4,7 @@ import { connectDB } from "./config/db.js";
 import webhookGet from "./webhook/get.js";
 import webhookPost from "./webhook/post.js";
 import { sendMessage } from "./messages/send.js";
+import logsRouter from "./messages/view.js";
 
 dotenv.config();
 connectDB();
@@ -11,9 +12,14 @@ connectDB();
 const app = express();
 app.use(express.json());
 
+// Webhook routes
 app.get("/webhook", webhookGet);
 app.post("/webhook", webhookPost);
 
+// Message logs routes
+app.use("/api/logs", logsRouter);
+
+// Test route
 app.get("/test", async (req, res) => {
   const phone = req.query.phone;
   if (!phone) {

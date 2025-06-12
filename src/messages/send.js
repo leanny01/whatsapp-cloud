@@ -1,3 +1,6 @@
+import { logOutbound } from "./log.js";
+import { callWhatsAppAPI } from "../lib/fetch.js";
+
 export async function sendMessage({ phone, text }) {
   const payload = {
     messaging_product: "whatsapp",
@@ -6,20 +9,20 @@ export async function sendMessage({ phone, text }) {
     text: { body: text },
   };
 
-  const response = await fetch(
-    `https://graph.facebook.com/v19.0/${process.env.PHONE_NUMBER_ID}/messages`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    }
-  );
+  const response = await callWhatsAppAPI({
+    url: `https://graph.facebook.com/v19.0/${process.env.PHONE_NUMBER_ID}/messages`,
+    body: payload,
+  });
+
+  const result = await response.json();
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Send failed: ${response.status} - ${error}`);
+    throw new Error(
+      `Send failed: ${response.status} - ${JSON.stringify(result)}`
+    );
   }
+
+  // Log outbound message
+  await logOutbound({ phone, text, result });
+  console.log("📤 Outbound message logged:", result);
 }
