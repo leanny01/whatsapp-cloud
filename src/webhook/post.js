@@ -1,15 +1,19 @@
-import { logInbound } from "../messages/log.js";
+import { normalizeInbound } from "../messages/normalize.js";
+import MessageLog from "../messages/model.js";
 
 export default async function webhookPost(req, res) {
-  const entry = req.body.entry?.[0];
-  const change = entry?.changes?.[0];
-  const msg = change?.value?.messages?.[0];
+  try {
+    const msg = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
 
-  if (!msg || !msg.type) {
-    console.warn("⚠️ Received malformed message:", req.body);
+    if (msg) {
+      const normalized = normalizeInbound(msg);
+      await MessageLog.create(normalized);
+      console.log(`📥 Received ${msg.type} message from ${msg.from}`);
+    }
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error processing webhook:", error);
+    res.status(500).json({ error: "Failed to process webhook" });
   }
-
-  await logInbound(msg);
-
-  res.sendStatus(200);
 }

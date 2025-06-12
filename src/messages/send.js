@@ -1,5 +1,6 @@
-import { logOutbound } from "./log.js";
+import { normalizeOutbound } from "./normalize.js";
 import { callWhatsAppAPI } from "../lib/fetch.js";
+import MessageLog from "./model.js";
 
 export async function sendMessage({ phone, text }) {
   if (!/^[0-9]{10,15}$/.test(phone)) {
@@ -23,7 +24,9 @@ export async function sendMessage({ phone, text }) {
   });
 
   // Log outbound message
-  await logOutbound({ phone, text, result });
+  const normalized = normalizeOutbound({ phone, text }, result);
+  await MessageLog.create(normalized);
+  console.log(`📤 Sent message to ${phone}`);
 
   return result;
 }
