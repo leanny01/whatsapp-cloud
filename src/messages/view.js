@@ -10,13 +10,17 @@ const router = express.Router();
  * @returns {Object} Formatted message
  */
 function formatMessage(message, phone) {
-  const isInbound = message.from === phone;
+  // sanitize phone number
+  const sanitizedPhone = phone.replace(/^\+|^0+/, "");
+
+  const isInbound = message.from === sanitizedPhone;
 
   return {
     from: isInbound ? message.from : "system",
     ...(isInbound ? {} : { to: message.to }),
     text: { body: message.text },
     direction: isInbound ? "inbound" : "outbound",
+    timestamp: message.timestamp,
   };
 }
 

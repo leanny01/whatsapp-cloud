@@ -26,7 +26,6 @@ export async function sendMessage({ phone, text }) {
   // Log outbound message
   const normalized = normalizeOutbound({ phone, text }, result);
   await MessageLog.create(normalized);
-  console.log(`📤 Sent message to ${phone}`);
 
   return result;
 }

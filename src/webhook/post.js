@@ -8,7 +8,6 @@ export default async function webhookPost(req, res) {
     if (msg) {
       const normalized = normalizeInbound(msg);
       await MessageLog.create(normalized);
-      console.log(`📥 Received ${msg.type} message from ${msg.from}`);
     }
 
     res.sendStatus(200);
