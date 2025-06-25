@@ -1,13 +1,6 @@
 import MessageLog from "../messages/model.js";
-
-/**
- * Normalize phone number by removing '+' and leading '0'
- * @param {string} phone - Phone number to normalize
- * @returns {string} Normalized phone number
- */
-function normalizePhoneNumber(phone) {
-  return phone.replace(/^\+|^0+/, "");
-}
+import { normalizeOutbound } from "../messages/normalize.js";
+import { callWhatsAppAPI } from "./fetch.js";
 
 /**
  * Get messages for a specific phone number
@@ -48,6 +41,15 @@ export async function getMessagesByPhone(phone, options = {}) {
 }
 
 /**
+ * Normalize phone number by removing '+' and leading '0'
+ * @param {string} phone - Phone number to normalize
+ * @returns {string} Normalized phone number
+ */
+function normalizePhoneNumber(phone) {
+  return phone.replace(/^\+|^0+/, "");
+}
+
+/**
  * Get message count for a specific phone number
  * @param {string} phone - The phone number to get message count for
  * @returns {Promise<number>} Number of messages
@@ -83,4 +85,40 @@ export async function getMessagesBetweenPhones(phone1, phone2, options = {}) {
     .limit(limit);
 
   return messages;
+}
+
+/**
+ * Send a text message to a phone number
+ * @param {string} phone - The phone number to send the message to
+ * @param {string} text - The text message to send
+ * @returns {Promise<Object>} API response from WhatsApp
+ */
+export async function sendText({ phone, text }) {
+  // Validate phone number format
+  if (!/^[0-9]{10,15}$/.test(phone)) {
+    throw new Error("Invalid phone number format");
+  }
+
+  // Validate message length
+  if (text.length > 4096) {
+    throw new Error("Message too long");
+  }
+
+  const payload = {
+    messaging_product: "whatsapp",
+    to: phone,
+    type: "text",
+    text: { body: text },
+  };
+
+  const result = await callWhatsAppAPI({
+    url: `https://graph.facebook.com/v19.0/${process.env.PHONE_NUMBER_ID}/messages`,
+    body: payload,
+  });
+
+  // Log outbound message
+  //const normalized = normalizeOutbound({ phone, text }, result);
+  //await MessageLog.create(normalized);
+
+  return result;
 }
