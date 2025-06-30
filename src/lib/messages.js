@@ -88,16 +88,116 @@ export async function getMessagesBetweenPhones(phone1, phone2, options = {}) {
 }
 
 /**
+ * Validate and normalize South African phone numbers to E.164 format
+ * @param {string} phone - Phone number to validate
+ * @returns {Object} { isValid: boolean, normalized: string, country: string, message?: string }
+ */
+export function validateSouthAfricanPhone(phone) {
+  // Remove all non-digit characters
+  let cleaned = phone.replace(/\D/g, "");
+
+  // South African mobile prefixes
+  const saMobilePrefixes = [
+    "60",
+    "61",
+    "62",
+    "63",
+    "64",
+    "65",
+    "66",
+    "67",
+    "68",
+    "69",
+    "70",
+    "71",
+    "72",
+    "73",
+    "74",
+    "75",
+    "76",
+    "77",
+    "78",
+    "79",
+    "80",
+    "81",
+    "82",
+    "83",
+    "84",
+    "85",
+    "86",
+    "87",
+    "88",
+    "89",
+  ];
+
+  // Check if it's already in E.164 format with country code
+  if (cleaned.startsWith("27")) {
+    const mobileNumber = cleaned.substring(2);
+
+    if (
+      mobileNumber.length === 9 &&
+      saMobilePrefixes.includes(mobileNumber.substring(0, 2))
+    ) {
+      return {
+        isValid: true,
+        normalized: cleaned, // Already in correct format for WhatsApp API
+        country: "ZA",
+      };
+    }
+  }
+  // Check if it's domestic format (starts with 0)
+  else if (cleaned.startsWith("0") && cleaned.length === 10) {
+    const mobileNumber = cleaned.substring(1); // Remove leading 0
+
+    if (saMobilePrefixes.includes(mobileNumber.substring(0, 2))) {
+      return {
+        isValid: true,
+        normalized: "27" + mobileNumber, // Convert to E.164 format
+        country: "ZA",
+      };
+    }
+  }
+  // Check if it's 9 digits (mobile number without country code or leading 0)
+  else if (cleaned.length === 9) {
+    if (saMobilePrefixes.includes(cleaned.substring(0, 2))) {
+      return {
+        isValid: true,
+        normalized: "27" + cleaned, // Add country code
+        country: "ZA",
+      };
+    }
+  }
+
+  // Not a valid South African number
+  return {
+    isValid: false,
+    normalized: cleaned,
+    country: "UNKNOWN",
+    message:
+      "Sorry, we haven't expanded to your region yet. We currently only serve South Africa. 🇿🇦",
+  };
+}
+
+/**
  * Send a text message to a phone number
  * @param {string} phone - The phone number to send the message to
  * @param {string} text - The text message to send
  * @returns {Promise<Object>} API response from WhatsApp
  */
 export async function sendText({ phone, text }) {
-  // Validate phone number format
-  if (!/^[0-9]{10,15}$/.test(phone)) {
-    throw new Error("Invalid phone number format");
+  // Validate South African phone number
+  console.log("phone--------*>", phone);
+  const validation = validateSouthAfricanPhone(phone);
+
+  if (!validation.isValid) {
+    throw new Error(validation.message);
   }
+
+  // Format for WhatsApp API: remove leading 0 and add +27
+  const formatted = validation.normalized.replace(/^0/, ""); // Remove leading 0 if present
+  const e164 = "+27" + formatted.substring(2); // Add +27 prefix (skip the 27 that's already there)
+  console.log("normalizedPhone-------->", validation.normalized);
+  console.log("E.164 formatted-------->", e164);
 
   // Validate message length
   if (text.length > 4096) {
@@ -106,19 +206,19 @@ export async function sendText({ phone, text }) {
 
   const payload = {
     messaging_product: "whatsapp",
-    to: phone,
+    to: e164.replace("+", ""),
     type: "text",
     text: { body: text },
   };
 
   const result = await callWhatsAppAPI({
-    url: `https://graph.facebook.com/v19.0/${process.env.PHONE_NUMBER_ID}/messages`,
+    url: `https://graph.facebook.com/v23.0/${process.env.PHONE_NUMBER_ID}/messages`,
     body: payload,
   });
 
   // Log outbound message
-  //const normalized = normalizeOutbound({ phone, text }, result);
-  //await MessageLog.create(normalized);
+  const normalized = normalizeOutbound({ phone: e164, text }, result);
+  await MessageLog.create(normalized);
 
   return result;
 }

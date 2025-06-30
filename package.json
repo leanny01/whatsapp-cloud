@@ -9,7 +9,8 @@
     "dev": "nodemon src/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "worker": "node src/worker.js"
+    "worker": "node src/worker.js",
+    "migrate:quotes": "node migrate-quote-items.js"
   },
   "keywords": [
     "whatsapp",

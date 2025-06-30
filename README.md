@@ -209,6 +209,17 @@ CI runs on every push to `main`. It checks:
 - [ ] Add message search functionality
 - [ ] Add date range filtering for messages
 
+## 🗺️ Conversation Flows
+
+This project features two main WhatsApp flows:
+
+- **Quote Flow**: Users can request a moving quote, view their quotes, or cancel a quote. [See full flow documentation →](docs/quote-flow.md)
+- **Driver Application Flow**: Drivers can register, check their application status, and manage their profile. [See full flow documentation →](docs/driver-flow.md)
+
+Each flow is fully documented with diagrams and step-by-step breakdowns in the linked files.
+
+- The previous inlined diagrams have been removed for clarity. See the linked documentation files for full details.
+
 ---
 
 ## License

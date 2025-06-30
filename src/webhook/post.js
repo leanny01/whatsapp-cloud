@@ -1,10 +1,4 @@
 import { extractMessages } from "../lib/extractMessages.js";
-//import { getUserData, isDuplicateMessage } from "../leads/state.js";
-//import { handleEntry } from "../flows/entry/handler.js";
-//import { handleQuote } from "../flows/quote/handler.js";
-//import { handleDriverStep } from "../flows/driver/handler.js";
-//import { handleInquiry } from "../flows/inquiry/handler.js";
-//import { sendText } from "../lib/messages.js";
 import { messageQueue } from "../queue/queue.js";
 
 /**
@@ -17,6 +11,7 @@ export default async function handleIncoming(req, res) {
     const messageData = extractMessages(req.body);
 
     for (const message of messageData) {
+      // Add to processing queue
       await messageQueue.add("incoming-message", message);
     }
 
