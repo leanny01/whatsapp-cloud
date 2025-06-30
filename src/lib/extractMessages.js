@@ -18,7 +18,7 @@ export function extractMessages(body) {
 
         for (const msg of msgs) {
           const phone = msg.from?.replace("@c.us", "") || null;
-          console.log("Phone-------->", msg);
+
           let content = null;
           let text = null;
 

@@ -8,10 +8,6 @@ import Quote from "./model.js";
 export async function saveUserQuote(wa_id, lead) {
   // Defensive check: convert string items to array format if needed
   if (typeof lead.items === "string") {
-    console.log(
-      `🔄 Converting string items to array format for user ${wa_id}: "${lead.items}"`
-    );
-
     let content = lead.items;
 
     // Handle complex stringified object format
@@ -21,11 +17,7 @@ export async function saveUserQuote(wa_id, lead) {
         const parsed = JSON.parse(lead.items.replace(/'/g, '"'));
         // Extract the actual text by combining all character values
         content = Object.values(parsed).join("");
-        console.log(`   🔧 Parsed complex format: "${content}"`);
       } catch (parseError) {
-        console.log(
-          `   ⚠️  Failed to parse complex format, using original: "${lead.items}"`
-        );
         content = lead.items;
       }
     }

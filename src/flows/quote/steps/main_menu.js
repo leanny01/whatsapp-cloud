@@ -9,9 +9,6 @@ const mainMenu =
   "Reply with 1, 2, or 3.";
 
 export default async function main_menu(msg, state) {
-  console.log("main_menu-->", state);
-  console.log("msg-->", msg);
-
   // If this is the first time entering main_menu or no valid option selected, show menu
   if (
     !msg.text ||

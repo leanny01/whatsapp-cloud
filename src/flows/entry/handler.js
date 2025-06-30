@@ -34,7 +34,6 @@ export class EntryHandler {
     }
 
     const input = text.trim();
-    console.log("Input", input);
 
     switch (input) {
       case "1":

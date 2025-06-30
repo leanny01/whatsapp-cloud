@@ -186,7 +186,7 @@ export function validateSouthAfricanPhone(phone) {
  */
 export async function sendText({ phone, text }) {
   // Validate South African phone number
-  console.log("phone--------*>", phone);
+
   const validation = validateSouthAfricanPhone(phone);
 
   if (!validation.isValid) {
@@ -196,8 +196,6 @@ export async function sendText({ phone, text }) {
   // Format for WhatsApp API: remove leading 0 and add +27
   const formatted = validation.normalized.replace(/^0/, ""); // Remove leading 0 if present
   const e164 = "+27" + formatted.substring(2); // Add +27 prefix (skip the 27 that's already there)
-  console.log("normalizedPhone-------->", validation.normalized);
-  console.log("E.164 formatted-------->", e164);
 
   // Validate message length
   if (text.length > 4096) {

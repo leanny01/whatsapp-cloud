@@ -3,7 +3,6 @@ import { saveUserQuote } from "../service.js";
 import { getContactMessage } from "../../../lib/contact.js";
 
 function buildQuoteSummary(lead) {
-  console.log("lead--------*>", lead);
   let summary = `*Quote Summary:*
 `;
   summary += `From: ${lead.from || "-"}

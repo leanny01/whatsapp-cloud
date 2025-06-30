@@ -6,17 +6,8 @@ import Driver from "./model.js";
  * @param {object} driverData - Driver application data
  */
 export async function saveDriverApplication(wa_id, driverData) {
-  console.log("💾 Saving driver application:", {
-    wa_id,
-    name: driverData.name,
-    phone: driverData.phone,
-    has_vehicles: !!driverData.vehicles?.length,
-    has_documents: !!driverData.documents,
-  });
-
   try {
     const result = await Driver.create({ wa_id, ...driverData });
-    console.log("✅ Driver application saved successfully:", result._id);
     return result;
   } catch (error) {
     console.error("❌ Error saving driver application:", error);

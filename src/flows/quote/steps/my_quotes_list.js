@@ -64,8 +64,6 @@ export default async function my_quotes_list(msg, state) {
       text: "Returning to main menu..., enter OK or 👍 to proceed",
     });
   } else {
-    console.log("my_quotes_list - invalid selection, showing list again");
-
     if (quotes.length === 0) {
       await sendText({
         phone: msg.phone,

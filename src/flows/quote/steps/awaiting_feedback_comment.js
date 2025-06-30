@@ -18,7 +18,6 @@ export default async function awaiting_feedback_comment(msg, state) {
       await Quote.findByIdAndUpdate(state.lastQuoteId, {
         "feedback.comment": comment,
       });
-      console.log(`📝 Feedback comment saved for quote ${state.lastQuoteId}`);
     } catch (error) {
       console.error("❌ Error saving feedback comment:", error);
     }

@@ -32,9 +32,6 @@ export default async function quote_submitted_menu(msg, state) {
         "feedback.rating": rating,
         "feedback.submittedAt": new Date(),
       });
-      console.log(
-        `📝 Feedback saved for quote ${state.lastQuoteId}: ${rating}`
-      );
     } catch (error) {
       console.error("❌ Error saving feedback:", error);
     }

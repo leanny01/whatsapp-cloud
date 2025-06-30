@@ -29,11 +29,8 @@ async function router_404(msg, state) {
  * @returns {Function} The appropriate step handler
  */
 export function getStepHandler(step) {
-  console.log("🛣️ Router called with step:", step);
-
   // Check if this is a driver step by looking for driver-specific prefixes
   if (step.startsWith("driver_") || step === "review_driver") {
-    console.log("🚗 Routing to driver flow");
     return getDriverStepHandler(step);
   }
 
@@ -60,17 +57,14 @@ export function getStepHandler(step) {
   ];
 
   if (driverAwaitingSteps.includes(step)) {
-    console.log("🚗 Routing to driver flow");
     return getDriverStepHandler(step);
   }
 
   // Check if this is a quote step
   if (typeof getQuoteStepHandler(step) === "function") {
-    console.log("📋 Routing to quote flow");
     return getQuoteStepHandler(step);
   }
 
   // Default to 404 fallback
-  console.log("❌ Routing to 404 fallback");
   return router_404;
 }
