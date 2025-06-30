@@ -13,6 +13,30 @@ A clean and modular Node.js starter for WhatsApp Cloud API integration, using:
 - ✅ Phone number normalization
 - ✅ Bearer token authentication
 
+## 📋 Table of Contents
+
+- [WhatsApp Cloud Messaging (Node.js + Express 5)](#whatsapp-cloud-messaging-nodejs--express-5)
+  - [📋 Table of Contents](#-table-of-contents)
+  - [📁 Folder Structure](#-folder-structure)
+  - [🚀 Getting Started](#-getting-started)
+    - [1. Install Dependencies](#1-install-dependencies)
+    - [2. Environment Variables](#2-environment-variables)
+    - [3. Run the App](#3-run-the-app)
+    - [4. PM2 Process Management (Production)](#4-pm2-process-management-production)
+  - [🧪 Testing](#-testing)
+  - [📫 API Endpoints](#-api-endpoints)
+    - [✅ Webhook Verification (Public)](#-webhook-verification-public)
+    - [📥 Webhook Receive (Public)](#-webhook-receive-public)
+    - [✉️ Send Message (Protected)](#️-send-message-protected)
+    - [📊 Message Logs (Protected)](#-message-logs-protected)
+  - [🔒 Authentication](#-authentication)
+  - [🔄 Message Logging Features](#-message-logging-features)
+  - [✅ GitHub Actions](#-github-actions)
+  - [🧱 Built With](#-built-with)
+  - [📌 TODOs](#-todos)
+  - [🗺️ Conversation Flows](#️-conversation-flows)
+  - [License](#license)
+
 ---
 
 ## 📁 Folder Structure
@@ -62,6 +86,50 @@ Or in production:
 ```bash
 npm start
 ```
+
+### 4. PM2 Process Management (Production)
+
+For production deployment, use PM2 to manage the server and worker processes:
+
+```bash
+# Install PM2 globally (if not already installed)
+npm install -g pm2
+
+# Start both server and worker processes
+pm2 start ecosystem.config.js
+
+# View running processes
+pm2 status
+
+# View logs
+pm2 logs
+
+# Monitor resources
+pm2 monit
+
+# Restart all processes
+pm2 restart all
+
+# Stop all processes
+pm2 stop all
+
+# Delete all processes
+pm2 delete all
+
+# Save PM2 configuration
+pm2 save
+
+# Setup PM2 to start on system boot
+pm2 startup
+```
+
+**PM2 Configuration:**
+
+- `whatsapp_api`: Express server (port 3000)
+- `whatsapp_worker`: Message processing worker
+- Auto-restart on crashes
+- Memory limit: 1GB per process
+- Logs stored in `./logs/` directory
 
 ---
 
@@ -196,6 +264,7 @@ CI runs on every push to `main`. It checks:
 - Express 5
 - MongoDB + Mongoose
 - Native fetch API
+- PM2 (Process Manager)
 - Vitest
 - GitHub Actions
 
