@@ -210,7 +210,7 @@ export async function sendText({ phone, text }) {
   };
 
   const result = await callWhatsAppAPI({
-    url: `https://graph.facebook.com/v23.0/${process.env.PHONE_NUMBER_ID}/messages`,
+    url: `https://graph.facebook.com/v22.0/${process.env.PHONE_NUMBER_ID}/messages`,
     body: payload,
   });
 
