@@ -47,8 +47,13 @@ export async function clearUserState(phone) {
  * @returns {Promise<Object>} - User state object or empty object
  */
 export async function getUserState(wa_id) {
-  const data = await client.get(`user:${wa_id}`);
-  return data ? JSON.parse(data) : {};
+  try {
+    const data = await client.get(`user:${wa_id}`);
+    return data ? JSON.parse(data) : { step: "main_menu" };
+  } catch (error) {
+    console.error("Error getting user state from Redis:", error);
+    return { step: "main_menu" };
+  }
 }
 
 /**

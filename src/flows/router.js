@@ -29,6 +29,12 @@ async function router_404(msg, state) {
  * @returns {Function} The appropriate step handler
  */
 export function getStepHandler(step) {
+  // Validate step parameter
+  if (!step || typeof step !== "string") {
+    console.error("❌ Router: Invalid step parameter:", step);
+    return router_404;
+  }
+
   // Check if this is a driver step by looking for driver-specific prefixes
   if (step.startsWith("driver_") || step === "review_driver") {
     return getDriverStepHandler(step);

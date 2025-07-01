@@ -43,6 +43,11 @@ const worker = new Worker(
 
       let state = (await getUserState(msg.wa_id)) || { step: "main_menu" };
 
+      // Ensure state has a valid step
+      if (!state.step) {
+        state.step = "main_menu";
+      }
+
       const handler = getStepHandler(state.step);
 
       const updatedState = await handler(msg, state);
