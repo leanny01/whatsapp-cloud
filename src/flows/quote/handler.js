@@ -18,6 +18,7 @@ import quote_submitted_actions from "./steps/quote_submitted_actions.js";
 import my_quotes_list from "./steps/my_quotes_list.js";
 import view_recent_quote from "./steps/view_recent_quote.js";
 import view_recent_quote_actions from "./steps/view_recent_quote_actions.js";
+import awaiting_specific_date from "./steps/awaiting_specific_date.js";
 import { withQuitSupport } from "../../lib/stateUtils.js";
 
 const handlers = {
@@ -25,6 +26,7 @@ const handlers = {
   awaiting_from: withQuitSupport(awaiting_from),
   awaiting_to: withQuitSupport(awaiting_to),
   awaiting_date: withQuitSupport(awaiting_date),
+  awaiting_specific_date: withQuitSupport(awaiting_specific_date),
   awaiting_items: withQuitSupport(awaiting_items),
   awaiting_more_items: withQuitSupport(awaiting_more_items),
   review_quote: withQuitSupport(review_quote),
