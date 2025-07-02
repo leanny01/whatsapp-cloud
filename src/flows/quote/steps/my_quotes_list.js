@@ -1,5 +1,6 @@
 import { sendText } from "../../../lib/messages.js";
 import { getContactMessage } from "../../../lib/contact.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function my_quotes_list(msg, state) {
   const quotes = state.quotes || [];
@@ -7,12 +8,11 @@ export default async function my_quotes_list(msg, state) {
 
   // Handle return to main menu
   if (input === "0") {
-    state = { step: "main_menu" };
     await sendText({
       phone: msg.phone,
       text: "🏠 Taking you back to the main menu...\n\nReply with *OK* or 👍 to continue! 👋",
     });
-    return state;
+    return updateState(state, { step: "main_menu" });
   }
 
   const idx = parseInt(input, 10) - 1;
@@ -58,11 +58,11 @@ export default async function my_quotes_list(msg, state) {
     });
 
     // Clear the quotes from state and set step to main_menu
-    state = { step: "main_menu" };
     await sendText({
       phone: msg.phone,
       text: "🏠 Taking you back to the main menu...\n\nReply with *OK* or 👍 to continue! 👋",
     });
+    return updateState(state, { step: "main_menu" });
   } else {
     if (quotes.length === 0) {
       await sendText({

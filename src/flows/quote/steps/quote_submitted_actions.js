@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 import main_menu from "./main_menu.js";
 
 export default async function quote_submitted_actions(msg, state) {
@@ -12,25 +13,22 @@ export default async function quote_submitted_actions(msg, state) {
 
   switch ((msg.text || "").trim()) {
     case "1":
-      state = { step: "awaiting_from", lead: {} };
       await sendText({
         phone: msg.phone,
         text: "🚚 Awesome! Let's create another quote for you!\n\nWhere are you moving *from*? 📍",
       });
-      break;
+      return updateState(state, { step: "awaiting_from", lead: {} });
     case "2":
       // View the most recent quote
-      state = { step: "view_recent_quote" };
-      break;
+      return updateState(state, { step: "view_recent_quote" });
     case "3":
-      state = { step: "main_menu" };
       await sendText({
         phone: msg.phone,
         text: "🏠 Taking you back to the main menu...\n\nReply with *OK* or 👍 to continue! 👋",
       });
       // Immediately render the main menu
       await main_menu({ ...msg, text: "" }, state);
-      break;
+      return updateState(state, { step: "main_menu" });
     default:
       await sendText({
         phone: msg.phone,
