@@ -87,7 +87,7 @@ module.exports = {
       repo: "https://github.com/leanny01/whatsapp-cloud.git",
       path: "/root/whatsapp-cloud",
       "post-deploy":
-        "npm install && node scripts/clear-cache.js --deploy && pm2 reload ecosystem.config.cjs",
+        "npm install && node scripts/clear-cache.js --deploy && pm2 reload ecosystem.config.cjs --no-daemon",
       "pre-deploy-local": "node scripts/clear-cache.js --pre-deploy",
     },
   },
