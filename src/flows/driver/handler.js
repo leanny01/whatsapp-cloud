@@ -5,6 +5,9 @@ import awaiting_call_number from "./steps/awaiting_call_number.js";
 import awaiting_address from "./steps/awaiting_address.js";
 import awaiting_license from "./steps/awaiting_license.js";
 import awaiting_vehicle from "./steps/awaiting_vehicle.js";
+import awaiting_vehicle_body_type from "./steps/awaiting_vehicle_body_type.js";
+import awaiting_vehicle_capacity from "./steps/awaiting_vehicle_capacity.js";
+import awaiting_vehicle_type_final from "./steps/awaiting_vehicle_type_final.js";
 import awaiting_ownership from "./steps/awaiting_ownership.js";
 import awaiting_company_registration from "./steps/awaiting_company_registration.js";
 import awaiting_company_name from "./steps/awaiting_company_name.js";
@@ -31,6 +34,9 @@ const handlers = {
   awaiting_address: withQuitSupport(awaiting_address),
   awaiting_license: withQuitSupport(awaiting_license),
   awaiting_vehicle: withQuitSupport(awaiting_vehicle),
+  awaiting_vehicle_body_type: withQuitSupport(awaiting_vehicle_body_type),
+  awaiting_vehicle_capacity: withQuitSupport(awaiting_vehicle_capacity),
+  awaiting_vehicle_type_final: withQuitSupport(awaiting_vehicle_type_final),
   awaiting_ownership: withQuitSupport(awaiting_ownership),
   awaiting_company_registration: withQuitSupport(awaiting_company_registration),
   awaiting_company_name: withQuitSupport(awaiting_company_name),
