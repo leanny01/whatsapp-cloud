@@ -23,14 +23,16 @@ if [ $? -ne 0 ]; then
 fi
 echo "✅ npm install completed successfully"
 
-# 3. Clear cache (without PM2 restart to avoid hanging)
+# 3. Clear cache (with timeout to prevent hanging)
 echo "🧹 Clearing cache..."
-node scripts/clear-cache.js all
-if [ $? -ne 0 ]; then
-    echo "❌ Cache cleanup failed!"
-    exit 1
+timeout 30s node scripts/clear-cache.js all
+if [ $? -eq 124 ]; then
+    echo "⚠️ Cache cleanup timed out, continuing..."
+elif [ $? -ne 0 ]; then
+    echo "⚠️ Cache cleanup failed, continuing anyway..."
+else
+    echo "✅ Cache cleanup completed successfully"
 fi
-echo "✅ Cache cleanup completed successfully"
 
 # 3.5. Restart PM2 processes separately
 echo "🔄 Restarting PM2 processes..."
