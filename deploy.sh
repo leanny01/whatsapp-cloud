@@ -46,6 +46,7 @@ echo "✅ PM2 processes restarted successfully"
 # 4. Check PM2 status
 echo "📊 Checking PM2 process status..."
 pm2 status
+pm2 remove logistics
 if [ $? -ne 0 ]; then
     echo "❌ PM2 status check failed!"
     exit 1
