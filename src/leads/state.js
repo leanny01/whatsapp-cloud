@@ -42,6 +42,71 @@ export async function clearUserState(phone) {
 }
 
 /**
+ * Clears all user states from Redis (use with caution).
+ * @returns {Promise<number>} Number of keys deleted
+ */
+export async function clearAllUserStates() {
+  try {
+    const keys = await client.keys("user:*");
+    if (keys.length > 0) {
+      const deleted = await client.del(...keys);
+      console.log(`🗑️ Cleared ${deleted} user states from Redis`);
+      return deleted;
+    }
+    return 0;
+  } catch (error) {
+    console.error("Error clearing all user states:", error);
+    throw error;
+  }
+}
+
+/**
+ * Clears user states older than specified hours.
+ * @param {number} hours - Age in hours
+ * @returns {Promise<number>} Number of keys deleted
+ */
+export async function clearOldUserStates(hours = 24) {
+  try {
+    const keys = await client.keys("user:*");
+    let deletedCount = 0;
+
+    for (const key of keys) {
+      const ttl = await client.ttl(key);
+      if (ttl === -1 || ttl > hours * 3600) {
+        await client.del(key);
+        deletedCount++;
+      }
+    }
+
+    console.log(`🗑️ Cleared ${deletedCount} old user states from Redis`);
+    return deletedCount;
+  } catch (error) {
+    console.error("Error clearing old user states:", error);
+    throw error;
+  }
+}
+
+/**
+ * Gets memory usage statistics for Redis.
+ * @returns {Promise<Object>} Memory usage info
+ */
+export async function getMemoryStats() {
+  try {
+    const info = await client.info("memory");
+    const keys = await client.keys("user:*");
+
+    return {
+      totalKeys: keys.length,
+      memoryInfo: info,
+      userStateKeys: keys.length,
+    };
+  } catch (error) {
+    console.error("Error getting memory stats:", error);
+    throw error;
+  }
+}
+
+/**
  * Loads the user's state from Redis.
  * @param {string} wa_id - WhatsApp user ID
  * @returns {Promise<Object>} - User state object or empty object
