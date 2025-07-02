@@ -3,11 +3,12 @@ import { getUserQuotes } from "../service.js";
 import { updateState } from "../../../lib/stateUtils.js";
 
 const mainMenu =
-  "*Main Menu*\n\n" +
-  "1️⃣ New Quote Request\n" +
-  "2️⃣ My Quote Requests\n" +
-  "3️⃣ Driver Registration\n\n" +
-  "Reply with 1, 2, or 3.";
+  "👋 *Welcome to MoveMate!* 🚚\n\n" +
+  "I'm here to help you with all your moving needs! What would you like to do today?\n\n" +
+  "📋 *1️⃣ Get a Moving Quote* - Let's find you the best price!\n" +
+  "📊 *2️⃣ Check My Quotes* - See your previous requests\n" +
+  "🚛 *3️⃣ Join Our Team* - Become a driver with us\n\n" +
+  "Just reply with 1, 2, or 3 to get started! 😊";
 
 export default async function main_menu(msg, state) {
   // If this is the first time entering main_menu or no valid option selected, show menu
@@ -27,7 +28,7 @@ export default async function main_menu(msg, state) {
     case "👍":
       await sendText({
         phone: msg.phone,
-        text: "Let's start a new quote! Where are you moving from?",
+        text: "🎉 Great choice! Let's get you the best moving quote possible!\n\nWhere are you moving *from*? (Just tell me the area or address)",
       });
       return updateState(state, { step: "awaiting_from", lead: {} });
     case "2": {
@@ -35,7 +36,7 @@ export default async function main_menu(msg, state) {
       if (!quotes.length) {
         await sendText({
           phone: msg.phone,
-          text: "You haven't submitted any quotes yet. Reply YES or 👍 to start a new quote.",
+          text: "📝 Looks like you haven't submitted any quotes yet! No worries - let's get you started with your first one!\n\nReply *YES* or 👍 to begin your moving quote! 🚚",
         });
         return updateState(state, { step: "main_menu", quotes });
       } else {
@@ -48,7 +49,7 @@ export default async function main_menu(msg, state) {
 
         await sendText({
           phone: msg.phone,
-          text: `*Your Quotes*\n\n${quotesList}\n\n*Reply with the number to view details*\n\n0️⃣ Return to main menu`,
+          text: `📊 *Here are your quotes:*\n\n${quotesList}\n\n*Reply with the number to view details*\n\n0️⃣ Back to main menu`,
         });
         return updateState(state, { step: "my_quotes_list", quotes });
       }
@@ -56,7 +57,7 @@ export default async function main_menu(msg, state) {
     case "3":
       await sendText({
         phone: msg.phone,
-        text: "*Driver Registration*\n\n1️⃣ Register as Driver\n2️⃣ Check Application Status\n3️⃣ Back to Main Menu\n\nReply with 1, 2, or 3.",
+        text: "🚛 *Awesome! Interested in joining our team?*\n\nWe're always looking for great drivers to help us move South Africa! 🇿🇦\n\n1️⃣ *Apply as Driver* - Start your application\n2️⃣ *Check My Status* - See your application progress\n3️⃣ *Back to Main Menu* - Return to main options\n\nReply with 1, 2, or 3! 👨‍💼",
       });
       return updateState(state, { step: "driver_menu" });
     default:

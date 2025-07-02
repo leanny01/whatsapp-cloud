@@ -10,7 +10,7 @@ export default async function my_quotes_list(msg, state) {
     state = { step: "main_menu" };
     await sendText({
       phone: msg.phone,
-      text: "Returning to main menu..., enter OK or 👍 to proceed",
+      text: "🏠 Taking you back to the main menu...\n\nReply with *OK* or 👍 to continue! 👋",
     });
     return state;
   }
@@ -61,13 +61,13 @@ export default async function my_quotes_list(msg, state) {
     state = { step: "main_menu" };
     await sendText({
       phone: msg.phone,
-      text: "Returning to main menu..., enter OK or 👍 to proceed",
+      text: "🏠 Taking you back to the main menu...\n\nReply with *OK* or 👍 to continue! 👋",
     });
   } else {
     if (quotes.length === 0) {
       await sendText({
         phone: msg.phone,
-        text: "*Your Quotes*\n\nYou haven't submitted any quotes yet.\n\nReply with '0' to return to main menu.",
+        text: "📋 *Your Quotes*\n\nYou haven't submitted any quotes yet. No worries - let's get you started!\n\nReply with *0* to return to main menu.",
       });
     } else {
       const quotesList = quotes
@@ -79,7 +79,7 @@ export default async function my_quotes_list(msg, state) {
 
       await sendText({
         phone: msg.phone,
-        text: `*Your Quotes*\n\n${quotesList}\n\n*Reply with the number to view details*\n\n0️⃣ Return to main menu`,
+        text: `📋 *Your Quotes*\n\n${quotesList}\n\n*Tap the number to see full details*\n\n0️⃣ *Back to Main Menu*`,
       });
     }
   }

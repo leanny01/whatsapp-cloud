@@ -10,7 +10,7 @@ export default async function driver_status(msg, state) {
     if (!applications || applications.length === 0) {
       await sendText({
         phone: msg.phone,
-        text: "❌ *No application found*\n\nWe couldn't find any driver registration application for this number.\n\nWould you like to register as a driver? Reply with '1' to start registration.",
+        text: "📝 *No applications found yet*\n\nI don't see any driver applications for your number yet. No worries though - let's get you started!\n\nWould you like to apply as a driver? Reply with *1* to begin your application! 🚛",
       });
       return updateState(state, { step: "driver_menu" });
     }
@@ -35,7 +35,7 @@ export default async function driver_status(msg, state) {
       })
       .join("\n\n");
 
-    const statusText = `*Your Driver Applications*\n\n${summary}\n\nReply with:\n1️⃣ Register new application\n2️⃣ Back to driver menu\n3️⃣ Back to main menu`;
+    const statusText = `📊 *Your Driver Applications*\n\n${summary}\n\nWhat would you like to do next?\n\n1️⃣ *Apply Again* - Submit another application\n2️⃣ *Driver Menu* - Back to driver options\n3️⃣ *Main Menu* - Return to main menu`;
 
     await sendText({
       phone: msg.phone,
@@ -47,7 +47,7 @@ export default async function driver_status(msg, state) {
     console.error("Error checking driver status:", error);
     await sendText({
       phone: msg.phone,
-      text: "Sorry, there was an error checking your application status. Please try again later.",
+      text: "😔 Sorry, I'm having trouble checking your application status right now. Please try again in a few minutes!",
     });
     return updateState(state, { step: "driver_menu" });
   }
