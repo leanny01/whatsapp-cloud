@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_other_activities(msg, state) {
   const other_activities = (msg.text || "").trim();
@@ -10,11 +11,12 @@ export default async function awaiting_other_activities(msg, state) {
     return state;
   }
 
-  state.driver = { ...state.driver, other_activities };
-  state.step = "awaiting_id_photo";
   await sendText({
     phone: msg.phone,
     text: "Please send a photo of your ID or passport.",
   });
-  return state;
+  return updateState(state, {
+    step: "awaiting_id_photo",
+    driver: { ...state.driver, other_activities },
+  });
 }

@@ -1,6 +1,7 @@
 import { sendText } from "../../../lib/messages.js";
 import { saveUserQuote } from "../service.js";
 import { getContactMessage } from "../../../lib/contact.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function summary(msg, state) {
   const { lead } = state;
@@ -10,8 +11,7 @@ export default async function summary(msg, state) {
       phone: msg.phone,
       text: `✅ Your quote request has been submitted! ${getContactMessage()}`,
     });
-    state.step = "quote_submitted_menu";
-    return state;
+    return updateState(state, { step: "quote_submitted_menu" });
   }
   // Show summary and menu
   const summary = `*Quote Summary*\nFrom: ${lead.from}\nTo: ${lead.to}\nDate: ${lead.date}\nType: ${lead.type}\nSize: ${lead.size}\nSpecial: ${lead.special || "None"}\n\nReply 'submit' to submit, 'edit' to change, or 'cancel' to abort.`;

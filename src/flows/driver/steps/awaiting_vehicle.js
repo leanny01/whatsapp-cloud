@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_vehicle(msg, state) {
   const vehicle_type = (msg.text || "").trim();
@@ -14,11 +15,12 @@ export default async function awaiting_vehicle(msg, state) {
   const vehicles = state.driver.vehicles || [];
   vehicles.push({ type: vehicle_type });
 
-  state.driver = { ...state.driver, vehicles };
-  state.step = "awaiting_ownership";
   await sendText({
     phone: msg.phone,
     text: "Do you own this vehicle? (yes/no)",
   });
-  return state;
+  return updateState(state, {
+    step: "awaiting_ownership",
+    driver: { ...state.driver, vehicles },
+  });
 }

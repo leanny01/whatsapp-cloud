@@ -1,15 +1,14 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function main_menu_confirm(msg, state) {
   if ((msg.text || "").trim().toLowerCase() === "yes") {
-    state = { step: "main_menu" };
     await sendText({
       phone: msg.phone,
       text: "Returning to main menu..., enter OK or 👍 to proceed",
     });
-    return state;
+    return updateState(state, { step: "main_menu" });
   } else {
-    state.step = "review_quote";
+    return updateState(state, { step: "review_quote" });
   }
-  return state;
 }

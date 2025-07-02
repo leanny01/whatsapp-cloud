@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_ownership(msg, state) {
   const owns = (msg.text || "").trim().toLowerCase();
@@ -18,11 +19,12 @@ export default async function awaiting_ownership(msg, state) {
     owns: owns === "yes",
   };
 
-  state.driver = { ...state.driver, vehicles };
-  state.step = "awaiting_company_registration";
   await sendText({
     phone: msg.phone,
     text: "Is this vehicle registered under a company? (yes/no)",
   });
-  return state;
+  return updateState(state, {
+    step: "awaiting_company_registration",
+    driver: { ...state.driver, vehicles },
+  });
 }

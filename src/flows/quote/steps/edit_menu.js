@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 const editMenu =
   "What would you like to edit?\n\n" +
@@ -12,33 +13,27 @@ const editMenu =
 export default async function edit_menu(msg, state) {
   switch ((msg.text || "").trim()) {
     case "1":
-      state.step = "edit_from";
       await sendText({ phone: msg.phone, text: "Enter new 'from' location:" });
-      break;
+      return updateState(state, { step: "edit_from" });
     case "2":
-      state.step = "edit_to";
       await sendText({ phone: msg.phone, text: "Enter new 'to' location:" });
-      break;
+      return updateState(state, { step: "edit_to" });
     case "3":
-      state.step = "edit_date";
       await sendText({
         phone: msg.phone,
         text: "Enter new date (YYYY-MM-DD):",
       });
-      break;
+      return updateState(state, { step: "edit_date" });
     case "4":
-      state.step = "edit_items";
       await sendText({
         phone: msg.phone,
         text: "Enter new items/description:",
       });
-      break;
+      return updateState(state, { step: "edit_items" });
     case "5":
-      state.step = "review_quote";
-      break;
+      return updateState(state, { step: "review_quote" });
     default:
       await sendText({ phone: msg.phone, text: editMenu });
-      break;
+      return state;
   }
-  return state;
 }

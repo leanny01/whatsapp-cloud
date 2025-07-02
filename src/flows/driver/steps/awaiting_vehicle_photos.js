@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_vehicle_photos(msg, state) {
   if (
@@ -20,12 +21,12 @@ export default async function awaiting_vehicle_photos(msg, state) {
   photos.push(msg.content);
 
   vehicles[currentVehicleIndex] = { ...currentVehicle, photos };
-  state.driver = { ...state.driver, vehicles };
-
-  state.step = "awaiting_more_vehicles";
   await sendText({
     phone: msg.phone,
     text: "Do you have more vehicles to register? (yes/no)",
   });
-  return state;
+  return updateState(state, {
+    step: "awaiting_more_vehicles",
+    driver: { ...state.driver, vehicles },
+  });
 }

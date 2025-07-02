@@ -1,5 +1,6 @@
 import { sendText } from "../../../lib/messages.js";
 import { getContactMessage } from "../../../lib/contact.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 const confirmationMenu =
   `✅ Your quote has been submitted! ${getContactMessage()}\n\n` +
@@ -40,13 +41,13 @@ export default async function quote_submitted_menu(msg, state) {
   // Handle different ratings
   if (rating === "1" || rating === "2" || rating === "3") {
     // Lower ratings - ask for details
-    state.step = "awaiting_feedback_comment";
     const ratingText =
       rating === "1" ? "very poor" : rating === "2" ? "poor" : "okay";
     await sendText({
       phone: msg.phone,
       text: `We appreciate your honest feedback! 🙏\n\nYou rated us as ${ratingText}. Please tell us what we can improve and where we fell short. Your feedback helps us serve you better.\n\nType your feedback below:`,
     });
+    return updateState(state, { step: "awaiting_feedback_comment" });
   } else {
     // Higher ratings - show next options
     const thankYouMessage =
@@ -58,8 +59,6 @@ export default async function quote_submitted_menu(msg, state) {
       phone: msg.phone,
       text: `${thankYouMessage}\n\nWhat would you like to do next?\n\n1️⃣ Submit another quote\n2️⃣ Back to main menu\n\nReply with 1 or 2.`,
     });
-    state.step = "quote_submitted_actions";
+    return updateState(state, { step: "quote_submitted_actions" });
   }
-
-  return state;
 }

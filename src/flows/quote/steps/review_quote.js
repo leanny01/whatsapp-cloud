@@ -1,6 +1,7 @@
 import { sendText } from "../../../lib/messages.js";
 import { saveUserQuote } from "../service.js";
 import { getContactMessage } from "../../../lib/contact.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 function buildQuoteSummary(lead) {
   let summary = `*Quote Summary:*
@@ -61,12 +62,11 @@ const reviewMenu =
 export default async function review_quote(msg, state) {
   // Check if we have lead data, if not redirect to main menu
   if (!state.lead) {
-    state = { step: "main_menu" };
     await sendText({
       phone: msg.phone,
       text: "It looks like we need to start fresh. Let me take you to the main menu.\n\n*Main Menu*\n\n1️⃣ New Quote Request\n2️⃣ My Quote Requests\n3️⃣ Driver Registration\n\nReply with 1, 2, or 3.",
     });
-    return state;
+    return updateState(state, { step: "main_menu" });
   }
 
   // Show summary and menu if this is the first time in this step
@@ -81,42 +81,39 @@ export default async function review_quote(msg, state) {
     case "1": {
       // Submit
       const quoteId = await saveUserQuote(msg.wa_id, state.lead);
-      state.lastQuoteId = quoteId; // Store quote ID for feedback tracking
-      state.step = "quote_submitted_menu";
       // Immediately show the feedback request
       await sendText({
         phone: msg.phone,
         text: `✅ Your quote has been submitted! ${getContactMessage()}\n\nHow would you rate your experience with our quote service?\n\n5 ⭐⭐⭐⭐⭐ Excellent\n4 ⭐⭐⭐⭐ Good\n3 ⭐⭐⭐ Okay\n2 ⭐⭐ Poor\n1 ⭐ Very Poor\n\nReply with 1, 2, 3, 4, or 5`,
       });
-      break;
+      return updateState(state, {
+        step: "quote_submitted_menu",
+        lastQuoteId: quoteId,
+      });
     }
     case "2": // Edit
-      state.step = "edit_menu";
       await sendText({
         phone: msg.phone,
         text: "What would you like to edit?\n\n1️⃣ From\n\n2️⃣ To\n\n3️⃣ Date\n\n4️⃣ Items\n\n5️⃣ Back to review\n\nReply with 1, 2, 3, 4, or 5.",
       });
-      break;
+      return updateState(state, { step: "edit_menu" });
     case "3": // Cancel
-      state.step = "cancel_confirm";
       await sendText({
         phone: msg.phone,
         text: "Are you sure you want to cancel? Reply YES to confirm or NO to go back.",
       });
-      break;
+      return updateState(state, { step: "cancel_confirm" });
     case "4": // Main Menu
-      state.step = "main_menu_confirm";
       await sendText({
         phone: msg.phone,
         text: "Go back to main menu? All progress will be lost. Reply YES to confirm or NO to stay.",
       });
-      break;
+      return updateState(state, { step: "main_menu_confirm" });
     default:
       await sendText({
         phone: msg.phone,
         text: buildQuoteSummary(state.lead) + reviewMenu,
       });
-      break;
+      return state;
   }
-  return state;
 }

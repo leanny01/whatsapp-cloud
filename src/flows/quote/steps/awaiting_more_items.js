@@ -1,5 +1,6 @@
 import { sendText } from "../../../lib/messages.js";
 import review_quote from "./review_quote.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 function buildQuoteSummary(lead) {
   let summary = `*Quote Summary:*
@@ -44,7 +45,6 @@ export default async function awaiting_more_items(msg, state) {
   switch (input) {
     case "1": {
       // User wants to add more items
-      state.step = "awaiting_items";
       const itemCount = state.lead.items.length;
       const progressText = `\n\n📊 *Progress: ${itemCount} item${itemCount !== 1 ? "s" : ""} collected*`;
 
@@ -61,12 +61,11 @@ What else are you moving? You can:
 
 Send any of these to continue!${progressText}`,
       });
-      break;
+      return updateState(state, { step: "awaiting_items" });
     }
 
     case "2": {
       // User is done, proceed to review
-      state.step = "review_quote";
       await sendText({
         phone: msg.phone,
         text: buildQuoteSummary(state.lead),
@@ -77,7 +76,7 @@ Send any of these to continue!${progressText}`,
       });
       // Immediately show the review summary and menu
       await review_quote({ ...msg, text: "" }, state);
-      break;
+      return updateState(state, { step: "review_quote" });
     }
 
     default: {
@@ -96,9 +95,7 @@ Reply with 1 or 2`;
         phone: msg.phone,
         text: continueMessage,
       });
-      break;
+      return state;
     }
   }
-
-  return state;
 }

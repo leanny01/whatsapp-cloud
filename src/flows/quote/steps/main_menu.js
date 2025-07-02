@@ -1,5 +1,6 @@
 import { sendText } from "../../../lib/messages.js";
 import { getUserQuotes } from "../service.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 const mainMenu =
   "*Main Menu*\n\n" +
@@ -24,23 +25,20 @@ export default async function main_menu(msg, state) {
     case "1":
     case "yes":
     case "👍":
-      state = { step: "awaiting_from", lead: {} };
       await sendText({
         phone: msg.phone,
         text: "Let's start a new quote! Where are you moving from?",
       });
-      break;
+      return updateState(state, { step: "awaiting_from", lead: {} });
     case "2": {
       const quotes = await getUserQuotes(msg.wa_id);
-      state.quotes = quotes; // Store in state for later steps
       if (!quotes.length) {
-        state.step = "main_menu";
         await sendText({
           phone: msg.phone,
           text: "You haven't submitted any quotes yet. Reply YES or 👍 to start a new quote.",
         });
+        return updateState(state, { step: "main_menu", quotes });
       } else {
-        state.step = "my_quotes_list";
         const quotesList = quotes
           .map(
             (q, i) =>
@@ -52,19 +50,17 @@ export default async function main_menu(msg, state) {
           phone: msg.phone,
           text: `*Your Quotes*\n\n${quotesList}\n\n*Reply with the number to view details*\n\n0️⃣ Return to main menu`,
         });
+        return updateState(state, { step: "my_quotes_list", quotes });
       }
-      break;
     }
     case "3":
-      state = { step: "driver_menu" };
       await sendText({
         phone: msg.phone,
         text: "*Driver Registration*\n\n1️⃣ Register as Driver\n2️⃣ Check Application Status\n3️⃣ Back to Main Menu\n\nReply with 1, 2, or 3.",
       });
-      break;
+      return updateState(state, { step: "driver_menu" });
     default:
       await sendText({ phone: msg.phone, text: mainMenu });
-      break;
+      return state;
   }
-  return state;
 }

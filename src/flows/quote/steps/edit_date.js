@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 function isValidDate(str) {
   return /^\d{4}-\d{2}-\d{2}$/.test(str);
@@ -14,21 +15,24 @@ export default async function edit_date(msg, state) {
     input === "maybe" ||
     input === "flexible"
   ) {
-    state.lead.date = "Flexible";
-    state.step = "review_quote";
-    return state;
+    return updateState(state, {
+      step: "review_quote",
+      lead: { ...state.lead, date: "Flexible" },
+    });
   }
 
   if (input === "soon" || input === "asap" || input === "urgent") {
-    state.lead.date = "ASAP";
-    state.step = "review_quote";
-    return state;
+    return updateState(state, {
+      step: "review_quote",
+      lead: { ...state.lead, date: "ASAP" },
+    });
   }
 
   if (input === "next month") {
-    state.lead.date = "Next Month";
-    state.step = "review_quote";
-    return state;
+    return updateState(state, {
+      step: "review_quote",
+      lead: { ...state.lead, date: "Next Month" },
+    });
   }
 
   if (
@@ -36,9 +40,10 @@ export default async function edit_date(msg, state) {
     input === "few months" ||
     input === "later"
   ) {
-    state.lead.date = "In a few months";
-    state.step = "review_quote";
-    return state;
+    return updateState(state, {
+      step: "review_quote",
+      lead: { ...state.lead, date: "In a few months" },
+    });
   }
 
   // Check for valid date format
@@ -51,7 +56,8 @@ export default async function edit_date(msg, state) {
   }
 
   // Valid date entered
-  state.lead.date = msg.text;
-  state.step = "review_quote";
-  return state;
+  return updateState(state, {
+    step: "review_quote",
+    lead: { ...state.lead, date: msg.text },
+  });
 }

@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function edit_to(msg, state) {
   if (!msg.text || msg.text.length < 3) {
@@ -8,7 +9,8 @@ export default async function edit_to(msg, state) {
     });
     return state;
   }
-  state.lead.to = msg.text;
-  state.step = "review_quote";
-  return state;
+  return updateState(state, {
+    step: "review_quote",
+    lead: { ...state.lead, to: msg.text },
+  });
 }

@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_specialization(msg, state) {
   const input = (msg.text || "").trim();
@@ -16,23 +17,25 @@ export default async function awaiting_specialization(msg, state) {
     3: "both",
   };
 
-  state.driver = {
+  const newDriver = {
     ...state.driver,
     specialization: specializationMap[input],
   };
 
   if (input === "2" || input === "3") {
-    state.step = "awaiting_other_activities";
     await sendText({
       phone: msg.phone,
       text: "Please describe your other activities or services.",
     });
+    return updateState(state, {
+      step: "awaiting_other_activities",
+      driver: newDriver,
+    });
   } else {
-    state.step = "awaiting_id_photo";
     await sendText({
       phone: msg.phone,
       text: "Please send a photo of your ID or passport.",
     });
+    return updateState(state, { step: "awaiting_id_photo", driver: newDriver });
   }
-  return state;
 }

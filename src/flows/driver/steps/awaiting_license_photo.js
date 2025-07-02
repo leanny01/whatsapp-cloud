@@ -1,5 +1,6 @@
 import { sendText } from "../../../lib/messages.js";
 import review_driver from "./review_driver.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_license_photo(msg, state) {
   if (
@@ -13,16 +14,17 @@ export default async function awaiting_license_photo(msg, state) {
     return state;
   }
   const license = (state.driver.documents?.license || []).concat([msg.content]);
-  state.driver = {
-    ...state.driver,
-    documents: { ...state.driver.documents, license },
-  };
-  state.step = "review_driver";
   await sendText({
     phone: msg.phone,
     text: "Thank you! Let's review your application.",
   });
   // Immediately show the review summary
   await review_driver({ ...msg, text: "" }, state);
-  return state;
+  return updateState(state, {
+    step: "review_driver",
+    driver: {
+      ...state.driver,
+      documents: { ...state.driver.documents, license },
+    },
+  });
 }

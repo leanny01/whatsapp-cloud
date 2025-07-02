@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_id_photo(msg, state) {
   if (
@@ -14,14 +15,15 @@ export default async function awaiting_id_photo(msg, state) {
   const id_passport = (state.driver.documents?.id_passport || []).concat([
     msg.content,
   ]);
-  state.driver = {
-    ...state.driver,
-    documents: { ...state.driver.documents, id_passport },
-  };
-  state.step = "awaiting_license_photo";
   await sendText({
     phone: msg.phone,
     text: "Please send a clear photo of your driver's license.",
   });
-  return state;
+  return updateState(state, {
+    step: "awaiting_license_photo",
+    driver: {
+      ...state.driver,
+      documents: { ...state.driver.documents, id_passport },
+    },
+  });
 }

@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_company_registration(msg, state) {
   const response = (msg.text || "").trim().toLowerCase();
@@ -18,20 +19,23 @@ export default async function awaiting_company_registration(msg, state) {
     registered_under_company: response === "yes",
   };
 
-  state.driver = { ...state.driver, vehicles };
-
   if (response === "yes") {
-    state.step = "awaiting_company_name";
     await sendText({
       phone: msg.phone,
       text: "What is the company name?",
     });
+    return updateState(state, {
+      step: "awaiting_company_name",
+      driver: { ...state.driver, vehicles },
+    });
   } else {
-    state.step = "awaiting_vehicle_photos";
     await sendText({
       phone: msg.phone,
       text: "Please send a photo of this vehicle.",
     });
+    return updateState(state, {
+      step: "awaiting_vehicle_photos",
+      driver: { ...state.driver, vehicles },
+    });
   }
-  return state;
 }

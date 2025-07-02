@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_experience(msg, state) {
   const years = parseInt((msg.text || "").trim(), 10);
@@ -9,11 +10,12 @@ export default async function awaiting_experience(msg, state) {
     });
     return state;
   }
-  state.driver = { ...state.driver, experience_years: years };
-  state.step = "awaiting_team";
   await sendText({
     phone: msg.phone,
     text: "Do you work by yourself or have a team? (Reply 'alone' or 'team')",
   });
-  return state;
+  return updateState(state, {
+    step: "awaiting_team",
+    driver: { ...state.driver, experience_years: years },
+  });
 }

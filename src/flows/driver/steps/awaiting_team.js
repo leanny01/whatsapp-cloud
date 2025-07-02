@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_team(msg, state) {
   const team = (msg.text || "").trim().toLowerCase();
@@ -9,11 +10,12 @@ export default async function awaiting_team(msg, state) {
     });
     return state;
   }
-  state.driver = { ...state.driver, works_alone: team === "alone" };
-  state.step = "awaiting_routes";
   await sendText({
     phone: msg.phone,
     text: "What routes or areas do you often work on? (List or describe)",
   });
-  return state;
+  return updateState(state, {
+    step: "awaiting_routes",
+    driver: { ...state.driver, works_alone: team === "alone" },
+  });
 }

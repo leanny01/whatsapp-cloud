@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_feedback_comment(msg, state) {
   if (!msg.text || msg.text.trim().length < 3) {
@@ -29,6 +30,5 @@ export default async function awaiting_feedback_comment(msg, state) {
     text: "Thank you for your detailed feedback! 🙏\n\nWe take all feedback seriously and will use it to improve our service.\n\nWhat would you like to do next?\n\n1️⃣ Submit another quote\n2️⃣ Back to main menu\n\nReply with 1 or 2.",
   });
 
-  state.step = "quote_submitted_actions";
-  return state;
+  return updateState(state, { step: "quote_submitted_actions" });
 }
