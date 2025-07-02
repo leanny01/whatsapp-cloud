@@ -277,7 +277,7 @@ node scripts/clear-cache.js all
 node scripts/clear-cache.js stats
 
 # Clear specific user
-node scripts/clear-cache.js user 27817981200
+node scripts/clear-cache.js user 27xxxxxxxxx
 
 # Perform maintenance
 node scripts/clear-cache.js maintenance

@@ -82,7 +82,7 @@ node scripts/clear-cache.js old --hours=168
 
 ```bash
 # Clear cache for a specific user
-node scripts/clear-cache.js user 27817981200
+node scripts/clear-cache.js user 27xxxxxxxxx
 ```
 
 **Use Cases:**
@@ -124,7 +124,7 @@ node scripts/clear-cache.js maintenance
 
 ```bash
 # Clear multiple users (script example)
-for user in 27817981200 27817981201 27817981202; do
+for user in 27xxxxxxxxx 27yyyyyyyyy 27zzzzzzzzz; do
   node scripts/clear-cache.js user $user
 done
 ```
@@ -214,7 +214,7 @@ console.log("Total keys:", stats.totalKeys);
 console.log("User state keys:", stats.userStateKeys);
 
 // Clear specific user
-await clearUserState("27817981200");
+await clearUserState("27xxxxxxxxx");
 ```
 
 ## Cache Management Features
