@@ -5,9 +5,17 @@ export default async function awaiting_items(msg, state) {
   let hasValid = false;
   let newItem = null;
 
+  // Create a new state object to prevent mutation
+  const newState = { ...state };
+
+  // Initialize lead if it doesn't exist
+  if (!newState.lead) {
+    newState.lead = {};
+  }
+
   // Initialize items array if it doesn't exist
-  if (!state.lead.items) {
-    state.lead.items = [];
+  if (!newState.lead.items) {
+    newState.lead.items = [];
   }
 
   if (content.type === "text" && content.text && content.text.length >= 2) {
@@ -28,7 +36,7 @@ export default async function awaiting_items(msg, state) {
   }
 
   if (!hasValid) {
-    const itemCount = state.lead.items.length;
+    const itemCount = newState.lead.items.length;
     const progressText =
       itemCount > 0
         ? `\n\n📊 *Progress: ${itemCount} item${itemCount !== 1 ? "s" : ""} collected*`
@@ -45,12 +53,12 @@ export default async function awaiting_items(msg, state) {
 
 Send any of these to help us understand your moving needs!${progressText}`,
     });
-    return state;
+    return newState;
   }
 
   // Add the new item to the collection
-  state.lead.items.push(newItem);
-  const totalItems = state.lead.items.length;
+  newState.lead.items.push(newItem);
+  const totalItems = newState.lead.items.length;
 
   // Show confirmation and ask if they want to add more
   let itemTypeText = "";
@@ -89,6 +97,6 @@ Reply with 1 or 2`;
   });
 
   // Set step to handle the continue/done choice
-  state.step = "awaiting_more_items";
-  return state;
+  newState.step = "awaiting_more_items";
+  return newState;
 }

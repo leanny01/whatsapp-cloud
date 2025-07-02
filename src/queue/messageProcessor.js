@@ -8,6 +8,11 @@ import {
 import { getStepHandler } from "../flows/router.js";
 import { connectDB } from "../config/db.js";
 import { logInbound } from "../messages/log.js";
+import {
+  createUserState,
+  validateUserState,
+  createDefaultState,
+} from "../lib/stateUtils.js";
 
 import "dotenv/config";
 
@@ -41,16 +46,30 @@ const worker = new Worker(
         return;
       }
 
-      let state = (await getUserState(msg.wa_id)) || { step: "main_menu" };
+      let state =
+        (await getUserState(msg.wa_id)) || createDefaultState(msg.wa_id);
 
       // Ensure state has a valid step
       if (!state.step) {
-        state.step = "main_menu";
+        state = createDefaultState(msg.wa_id);
       }
+
+      // Add user ID to state for validation
+      state = createUserState(state, msg.wa_id);
 
       const handler = getStepHandler(state.step);
 
-      const updatedState = await handler(msg, state);
+      let updatedState = await handler(msg, state);
+
+      // Validate that the updated state belongs to the correct user
+      if (!validateUserState(updatedState, msg.wa_id)) {
+        console.error("❌ State user mismatch detected:", {
+          expected: msg.wa_id,
+          actual: updatedState?.userId,
+        });
+        // Reset to safe state
+        updatedState = createDefaultState(msg.wa_id);
+      }
 
       updatedState.last_message_id = msg.messageId;
       await saveUserState(msg.wa_id, updatedState);
