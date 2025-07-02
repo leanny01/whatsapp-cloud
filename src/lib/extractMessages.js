@@ -11,13 +11,14 @@ export function extractMessages(body) {
 
     for (const entry of entries) {
       const changes = entry?.changes || [];
-      const wa_id = entry?.id;
 
       for (const change of changes) {
         const msgs = change?.value?.messages || [];
 
         for (const msg of msgs) {
           const phone = msg.from?.replace("@c.us", "") || null;
+          // Use the sender's phone number as the wa_id for user identification
+          const wa_id = phone;
 
           let content = null;
           let text = null;
