@@ -1,34 +1,32 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 import driver_menu from "./driver_menu.js";
 
 export default async function driver_submitted(msg, state) {
   let unknownInput = false;
   switch ((msg.text || "").trim()) {
     case "1":
-      state = { step: "awaiting_name", driver: {} };
       await sendText({
         phone: msg.phone,
         text: "Let's start a new driver registration! What is your full name?",
       });
-      break;
+      return updateState(state, { step: "awaiting_name", driver: {} });
     case "2":
-      state = { step: "main_menu" };
       await sendText({
         phone: msg.phone,
         text: "Returning to main menu..., enter OK or 👍🏼 to continue",
       });
       // Immediately render the main menu
       await driver_menu({ ...msg, text: "" }, state);
-      break;
+      return updateState(state, { step: "main_menu" });
     case "status":
     case "check":
     case "application status":
-      state = { step: "driver_status_menu" };
       await sendText({
         phone: msg.phone,
         text: "Here's your driver application status menu!",
       });
-      break;
+      return updateState(state, { step: "driver_status_menu" });
     default:
       unknownInput = true;
       break;

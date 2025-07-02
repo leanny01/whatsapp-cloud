@@ -1,5 +1,6 @@
 import { sendText } from "../../../lib/messages.js";
 import { getDriverApplications } from "../service.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function driver_status(msg, state) {
   try {
@@ -11,8 +12,7 @@ export default async function driver_status(msg, state) {
         phone: msg.phone,
         text: "❌ *No application found*\n\nWe couldn't find any driver registration application for this number.\n\nWould you like to register as a driver? Reply with '1' to start registration.",
       });
-      state.step = "driver_menu";
-      return state;
+      return updateState(state, { step: "driver_menu" });
     }
 
     // Build a summary for each application
@@ -42,15 +42,13 @@ export default async function driver_status(msg, state) {
       text: statusText,
     });
 
-    state.step = "driver_status_menu";
-    return state;
+    return updateState(state, { step: "driver_status_menu" });
   } catch (error) {
     console.error("Error checking driver status:", error);
     await sendText({
       phone: msg.phone,
       text: "Sorry, there was an error checking your application status. Please try again later.",
     });
-    state.step = "driver_menu";
-    return state;
+    return updateState(state, { step: "driver_menu" });
   }
 }
