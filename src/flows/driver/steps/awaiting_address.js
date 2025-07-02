@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_address(msg, state) {
   const home_address = (msg.text || "").trim();
@@ -9,11 +10,12 @@ export default async function awaiting_address(msg, state) {
     });
     return state;
   }
-  state.driver = { ...state.driver, home_address };
-  state.step = "awaiting_license";
   await sendText({
     phone: msg.phone,
     text: "What is your driver's license number?",
   });
-  return state;
+  return updateState(state, {
+    step: "awaiting_license",
+    driver: { ...state.driver, home_address },
+  });
 }

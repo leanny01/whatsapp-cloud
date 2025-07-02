@@ -1,5 +1,6 @@
 import { sendText } from "../../../lib/messages.js";
 import { saveDriverApplication } from "../service.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function review_driver(msg, state) {
   const d = state.driver;
@@ -11,8 +12,7 @@ export default async function review_driver(msg, state) {
       phone: msg.phone,
       text: "✅ Your driver application has been submitted! We will contact you soon.",
     });
-    state.step = "driver_submitted";
-    return state;
+    return updateState(state, { step: "driver_submitted" });
   }
 
   // If user sends "edit", go back to edit menu (you can implement this)

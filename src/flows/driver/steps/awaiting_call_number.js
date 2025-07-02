@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_call_number(msg, state) {
   let call_number = (msg.text || "").trim();
@@ -10,8 +11,9 @@ export default async function awaiting_call_number(msg, state) {
     return state;
   }
   if (call_number.toLowerCase() === "same") call_number = state.driver.phone;
-  state.driver = { ...state.driver, call_number };
-  state.step = "awaiting_address";
   await sendText({ phone: msg.phone, text: "What is your home address?" });
-  return state;
+  return updateState(state, {
+    step: "awaiting_address",
+    driver: { ...state.driver, call_number },
+  });
 }

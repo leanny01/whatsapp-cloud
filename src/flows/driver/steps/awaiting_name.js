@@ -1,4 +1,5 @@
 import { sendText } from "../../../lib/messages.js";
+import { updateState } from "../../../lib/stateUtils.js";
 
 export default async function awaiting_name(msg, state) {
   const name = (msg.text || "").trim();
@@ -10,11 +11,12 @@ export default async function awaiting_name(msg, state) {
     });
     return state;
   }
-  state.driver = { ...state.driver, name };
-  state.step = "awaiting_phone";
   await sendText({
     phone: msg.phone,
     text: "What is your WhatsApp number? (or reply 'same' if this number)",
   });
-  return state;
+  return updateState(state, {
+    step: "awaiting_phone",
+    driver: { ...state.driver, name },
+  });
 }
