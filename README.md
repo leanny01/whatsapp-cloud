@@ -35,6 +35,8 @@ A clean and modular Node.js starter for WhatsApp Cloud API integration, using:
   - [🗑️ Cache Management](#️-cache-management)
     - [Quick Start](#quick-start)
     - [Key Features](#key-features)
+  - [📚 Documentation](#-documentation)
+  - [🏷️ Release Information](#️-release-information)
   - [✅ GitHub Actions](#-github-actions)
   - [🧱 Built With](#-built-with)
   - [📌 TODOs](#-todos)
@@ -382,6 +384,83 @@ CI runs on every push to `main`. It checks:
 - [ ] Add message search functionality
 - [ ] Add date range filtering for messages
 
+## 📚 Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+### 📋 Core Documentation
+
+- **[CHANGELOG.md](docs/CHANGELOG.md)** - Complete version history and changes
+- **[Cache Management](docs/cache-management.md)** - Cache operations and maintenance
+- **[Quote Flow](docs/quote-flow.md)** - Quote request process documentation
+- **[Driver Flow](docs/driver-flow.md)** - Driver application process documentation
+
+### 🏷️ Release Information
+
+- **[Release Notes v1.0.0](docs/releases/RELEASE_NOTES_v1.0.0.md)** - Detailed release information
+- **[CHANGELOG.md](docs/CHANGELOG.md)** - Version history and migration guides
+
+### 📖 Quick Links
+
+- [Cache Management CLI](docs/cache-management.md#cli-usage)
+- [PM2 Process Management](docs/cache-management.md#pm2-integration)
+- [Deployment Guide](docs/releases/RELEASE_NOTES_v1.0.0.md#deployment)
+- [API Documentation](#-api-endpoints)
+
+---
+
+## 🏷️ Release Information
+
+### Current Version: 1.0.0
+
+**Release Date:** January 2, 2025  
+**Release Type:** Initial Release
+
+### 🎉 What's New in 1.0.0
+
+- ✅ **Complete WhatsApp Integration** - Full quote and driver application flows
+- ✅ **Enhanced User Experience** - Conversational interfaces with South African context
+- ✅ **Robust State Management** - Immutable state updates and error handling
+- ✅ **Cache Management System** - Comprehensive Redis cache operations
+- ✅ **PM2 Process Management** - Production-ready deployment with scheduled maintenance
+- ✅ **Universal Quit Functionality** - Users can exit any flow gracefully
+- ✅ **Detailed Vehicle Selection** - 3-step driver vehicle registration process
+- ✅ **View My Quote Feature** - Immediate quote viewing after submission
+- ✅ **Enhanced Date Input** - Progressive disclosure with flexible options
+
+### 📋 Key Features
+
+#### 🚛 Driver Flow
+
+- Comprehensive 3-step vehicle selection (Body Type → Capacity → Vehicle Type)
+- South African context examples for routes
+- Application status tracking and management
+- Professional registration process
+
+#### 📋 Quote Flow
+
+- Multi-item upload support (photos, videos, documents, audio, text)
+- Enhanced date input with flexible options
+- Immediate quote viewing after submission
+- Feedback system with star ratings
+- Conversational interface throughout
+
+#### 🔧 System Features
+
+- Universal quit functionality across all flows
+- Robust state management with validation
+- Comprehensive cache management
+- PM2 production deployment
+- Automated maintenance and cleanup
+
+### 🔗 Quick Links
+
+- **[Full Release Notes →](docs/releases/RELEASE_NOTES_v1.0.0.md)**
+- **[Complete Changelog →](docs/CHANGELOG.md)**
+- **[Migration Guide →](docs/CHANGELOG.md#migration-guide)**
+
+---
+
 ## 🗺️ Conversation Flows
 
 This project features two main WhatsApp flows:
@@ -390,8 +469,6 @@ This project features two main WhatsApp flows:
 - **Driver Application Flow**: Drivers can register, check their application status, and manage their profile. [See full flow documentation →](docs/driver-flow.md)
 
 Each flow is fully documented with diagrams and step-by-step breakdowns in the linked files.
-
-- The previous inlined diagrams have been removed for clarity. See the linked documentation files for full details.
 
 ---
 
