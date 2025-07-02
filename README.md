@@ -31,6 +31,9 @@ A clean and modular Node.js starter for WhatsApp Cloud API integration, using:
     - [📊 Message Logs (Protected)](#-message-logs-protected)
   - [🔒 Authentication](#-authentication)
   - [🔄 Message Logging Features](#-message-logging-features)
+  - [🗑️ Cache Management](#️-cache-management)
+    - [Quick Start](#quick-start)
+    - [Key Features](#key-features)
   - [✅ GitHub Actions](#-github-actions)
   - [🧱 Built With](#-built-with)
   - [📌 TODOs](#-todos)
@@ -45,11 +48,21 @@ A clean and modular Node.js starter for WhatsApp Cloud API integration, using:
 src/
   ├── config/       # DB connection
   ├── lib/          # Shared utilities
+  │   ├── cacheManager.js  # Cache management utilities
+  │   └── stateUtils.js    # State management helpers
   ├── middleware/   # Express middleware
   ├── messages/     # WhatsApp messaging logic
   ├── models/       # Database models
   ├── webhook/      # Incoming & verification logic
+  ├── flows/        # Conversation flow handlers
+  │   ├── quote/    # Quote request flow
+  │   └── driver/   # Driver application flow
+  ├── queue/        # Message processing queue
+  ├── leads/        # User state management
   └── server.js     # Main app
+
+scripts/
+  └── clear-cache.js  # Cache management CLI tool
 ```
 
 ---
@@ -245,6 +258,39 @@ The token is configured via the `API_TOKEN` environment variable.
 - ✅ Pagination and sorting support
 - ✅ Message count tracking
 - ✅ Error handling and validation
+
+---
+
+## 🗑️ Cache Management
+
+The application includes comprehensive cache management tools for Redis-based state storage and memory optimization. This system provides CLI tools, programmatic APIs, and automated maintenance capabilities.
+
+**📖 [View Complete Cache Management Documentation →](docs/cache-management.md)**
+
+### Quick Start
+
+```bash
+# Clear all caches
+node scripts/clear-cache.js all
+
+# View cache statistics
+node scripts/clear-cache.js stats
+
+# Clear specific user
+node scripts/clear-cache.js user 27817981200
+
+# Perform maintenance
+node scripts/clear-cache.js maintenance
+```
+
+### Key Features
+
+- ✅ **CLI Interface**: Easy command-line cache management
+- ✅ **Programmatic API**: `CacheManager` class for integration
+- ✅ **Memory Monitoring**: Real-time statistics and analytics
+- ✅ **Automated Maintenance**: Scheduled cleanup and optimization
+- ✅ **Selective Clearing**: User-specific and time-based clearing
+- ✅ **Emergency Recovery**: Complete system reset capabilities
 
 ---
 
