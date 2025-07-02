@@ -7,7 +7,8 @@ const menu =
   "📝 *1️⃣ Start Application* - Begin your journey with us\n" +
   "📊 *2️⃣ Check My Status* - See how your application is doing\n" +
   "🏠 *3️⃣ Back to Main Menu* - Return to main options\n\n" +
-  "What would you like to do? Reply with 1, 2, or 3! 😊";
+  "What would you like to do? Reply with 1, 2, or 3! 😊\n\n" +
+  "💡 *Tip:* You can type *quit*, *cancel*, or *menu* at any time to return to main menu!";
 
 export default async function driver_menu(msg, state) {
   switch ((msg.text || "").trim()) {

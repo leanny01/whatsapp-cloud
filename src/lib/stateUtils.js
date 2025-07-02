@@ -55,3 +55,78 @@ export function updateState(state, updates) {
     lastUpdated: Date.now(),
   };
 }
+
+/**
+ * Checks if user input is a quit command
+ * @param {string} input - User input text
+ * @returns {boolean} True if input is a quit command
+ */
+export function isQuitCommand(input) {
+  if (!input) return false;
+
+  const quitCommands = [
+    "quit",
+    "cancel",
+    "stop",
+    "exit",
+    "back",
+    "menu",
+    "main",
+    "q",
+    "c",
+    "0",
+    "00",
+    "home",
+    "start over",
+    "restart",
+  ];
+
+  return quitCommands.some(
+    (cmd) => input.toLowerCase().trim() === cmd.toLowerCase()
+  );
+}
+
+/**
+ * Handles quit command with appropriate message
+ * @param {Object} msg - Message object
+ * @param {Object} state - Current state
+ * @param {string} customMessage - Optional custom quit message
+ * @returns {Object} New state object
+ */
+export async function handleQuitCommand(msg, state, customMessage = null) {
+  const { sendText } = await import("../lib/messages.js");
+
+  const defaultMessage =
+    "🏠 Taking you back to the main menu...\n\nReply with *OK* or 👍 to continue! 👋";
+  const message = customMessage || defaultMessage;
+
+  await sendText({
+    phone: msg.phone,
+    text: message,
+  });
+
+  return updateState(state, {
+    step: "main_menu",
+    // Clear flow-specific data
+    lead: undefined,
+    lastQuoteId: undefined,
+    driverData: undefined,
+  });
+}
+
+/**
+ * Wraps a step handler with quit command functionality
+ * @param {Function} stepHandler - Original step handler function
+ * @returns {Function} Wrapped step handler with quit support
+ */
+export function withQuitSupport(stepHandler) {
+  return async function (msg, state) {
+    // Check for quit command first
+    if (isQuitCommand(msg.text)) {
+      return await handleQuitCommand(msg, state);
+    }
+
+    // If not a quit command, proceed with original handler
+    return await stepHandler(msg, state);
+  };
+}

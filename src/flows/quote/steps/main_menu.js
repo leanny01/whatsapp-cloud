@@ -8,7 +8,8 @@ const mainMenu =
   "📋 *1️⃣ Get a Moving Quote* - Let's find you the best price!\n" +
   "📊 *2️⃣ Check My Quotes* - See your previous requests\n" +
   "🚛 *3️⃣ Join Our Team* - Become a driver with us\n\n" +
-  "Just reply with 1, 2, or 3 to get started! 😊";
+  "Just reply with 1, 2, or 3 to get started! 😊\n\n" +
+  "💡 *Tip:* You can type *quit*, *cancel*, or *menu* at any time to return here!";
 
 export default async function main_menu(msg, state) {
   // If this is the first time entering main_menu or no valid option selected, show menu
