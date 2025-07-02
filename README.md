@@ -23,6 +23,7 @@ A clean and modular Node.js starter for WhatsApp Cloud API integration, using:
     - [2. Environment Variables](#2-environment-variables)
     - [3. Run the App](#3-run-the-app)
     - [4. PM2 Process Management (Production)](#4-pm2-process-management-production)
+    - [PM2 Usage Examples](#pm2-usage-examples)
   - [🧪 Testing](#-testing)
   - [📫 API Endpoints](#-api-endpoints)
     - [✅ Webhook Verification (Public)](#-webhook-verification-public)
@@ -102,14 +103,14 @@ npm start
 
 ### 4. PM2 Process Management (Production)
 
-For production deployment, use PM2 to manage the server and worker processes:
+For production deployment, use PM2 to manage the server and worker processes with integrated cache management:
 
 ```bash
 # Install PM2 globally (if not already installed)
 npm install -g pm2
 
-# Start both server and worker processes
-pm2 start ecosystem.config.js
+# Start all processes (including scheduled maintenance)
+pm2 start ecosystem.config.cjs
 
 # View running processes
 pm2 status
@@ -120,7 +121,7 @@ pm2 logs
 # Monitor resources
 pm2 monit
 
-# Restart all processes
+# Restart all processes (with automatic cache clearing)
 pm2 restart all
 
 # Stop all processes
@@ -134,15 +135,62 @@ pm2 save
 
 # Setup PM2 to start on system boot
 pm2 startup
+
+# Deploy to production (with cache clearing)
+pm2 deploy production setup  # First time
+pm2 deploy production        # Deploy updates
+
+# View specific process logs
+pm2 logs cache_maintenance
+pm2 logs whatsapp_api
+pm2 logs whatsapp_worker
+
+# Check PM2 and cache status
+node scripts/clear-cache.js pm2-status
+
+# Clean restart (clear caches and restart)
+node scripts/clear-cache.js pm2-clean
 ```
 
 **PM2 Configuration:**
 
 - `whatsapp_api`: Express server (port 3000)
 - `whatsapp_worker`: Message processing worker
-- Auto-restart on crashes
-- Memory limit: 1GB per process
+- `cache_maintenance`: Daily cache maintenance at 2 AM
+- `cache_cleanup`: Weekly cleanup at 3 AM Sundays
+- Auto-restart on crashes with cache management
+- Memory limit: 1GB per process (512MB for maintenance)
 - Logs stored in `./logs/` directory
+- **PM2 Hooks**: Automatic cache clearing on restarts and deployments
+- **Graceful Restarts**: Preserves user states during restarts
+- **Deployment Integration**: Cache management for deployments
+- **Scheduled Maintenance**: Automatic daily/weekly cache cleanup
+
+### PM2 Usage Examples
+
+```bash
+# Process Management
+pm2 start ecosystem.config.cjs          # Start all processes
+pm2 restart all                         # Restart with cache clearing
+pm2 stop all                           # Stop all processes
+pm2 delete all                         # Remove from PM2
+
+# Deployment
+pm2 deploy production setup            # Initial setup
+pm2 deploy production                  # Deploy updates
+pm2 deploy production revert 1         # Rollback
+
+# Monitoring
+pm2 status                             # View process status
+pm2 monit                              # Monitor resources
+pm2 logs                               # View all logs
+pm2 logs cache_maintenance             # View maintenance logs
+
+# Specific Process Control
+pm2 restart whatsapp_api               # Restart API only
+pm2 logs whatsapp_worker --follow      # Follow worker logs
+pm2 describe cache_maintenance         # View maintenance schedule
+```
 
 ---
 
@@ -270,17 +318,27 @@ The application includes comprehensive cache management tools for Redis-based st
 ### Quick Start
 
 ```bash
+# View cache statistics
+node scripts/clear-cache.js stats
+
 # Clear all caches
 node scripts/clear-cache.js all
 
-# View cache statistics
-node scripts/clear-cache.js stats
+# Clear old data (24+ hours)
+node scripts/clear-cache.js old
 
 # Clear specific user
 node scripts/clear-cache.js user 27xxxxxxxxx
 
 # Perform maintenance
 node scripts/clear-cache.js maintenance
+
+# PM2 status and cache info
+node scripts/clear-cache.js pm2-status
+
+# View maintenance logs
+pm2 logs cache_maintenance
+tail -f ./logs/cache-maintenance-combined.log
 ```
 
 ### Key Features

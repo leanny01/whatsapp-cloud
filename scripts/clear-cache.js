@@ -61,6 +61,73 @@ async function main() {
         console.log("✅ Maintenance completed:", maintenanceResults);
         break;
 
+      // PM2-specific commands
+      case "--pm2-restart":
+        console.log("🔄 PM2 restart detected - clearing critical caches...");
+        results = await CacheManager.clearAllCaches({
+          clearUserStates: false, // Keep user states during restart
+          clearQueueJobs: true, // Clear queue to prevent stuck jobs
+        });
+        console.log("✅ PM2 restart cache clearing completed:", results);
+        break;
+
+      case "--deploy":
+        console.log("🚀 Deployment detected - clearing all caches...");
+        results = await CacheManager.clearAllCaches({
+          clearUserStates: true,
+          clearQueueJobs: true,
+        });
+        console.log("✅ Deployment cache clearing completed:", results);
+        break;
+
+      case "--pre-deploy":
+        console.log("📦 Pre-deployment - backing up and clearing caches...");
+        results = await CacheManager.clearAllCaches({
+          clearUserStates: true,
+          clearQueueJobs: true,
+        });
+        console.log("✅ Pre-deployment cache clearing completed:", results);
+        break;
+
+      case "pm2-status": {
+        console.log("📊 Getting PM2 and cache status...");
+        const pm2Stats = await CacheManager.getCacheStats();
+        console.log("📈 PM2 Cache Status:", JSON.stringify(pm2Stats, null, 2));
+
+        // Check if PM2 is running
+        try {
+          const { execSync } = await import("child_process");
+          const pm2List = execSync("pm2 list --no-daemon", {
+            encoding: "utf8",
+          });
+          console.log("🔄 PM2 Process Status:");
+          console.log(pm2List);
+        } catch (error) {
+          console.log("⚠️ PM2 not available or no processes running");
+        }
+        break;
+      }
+
+      case "pm2-clean": {
+        console.log(
+          "🧹 PM2 clean restart - clearing all caches and restarting..."
+        );
+        results = await CacheManager.clearAllCaches({
+          clearUserStates: true,
+          clearQueueJobs: true,
+        });
+        console.log("✅ Cache cleared, restarting PM2 processes...");
+
+        try {
+          const { execSync } = await import("child_process");
+          execSync("pm2 restart all", { stdio: "inherit" });
+          console.log("✅ PM2 processes restarted successfully");
+        } catch (error) {
+          console.error("❌ Failed to restart PM2 processes:", error.message);
+        }
+        break;
+      }
+
       default:
         console.log(`
 🗑️ Cache Management CLI
@@ -75,6 +142,15 @@ Commands:
   stats                   Show cache statistics
   maintenance             Perform cache maintenance
 
+PM2 Commands:
+  pm2-status              Show PM2 and cache status
+  pm2-clean               Clear caches and restart PM2 processes
+
+PM2 Hooks (automatic):
+  --pm2-restart           Called before PM2 restart
+  --deploy                Called after deployment
+  --pre-deploy            Called before deployment
+
 Examples:
   node scripts/clear-cache.js all
   node scripts/clear-cache.js all --queue
@@ -82,6 +158,8 @@ Examples:
   node scripts/clear-cache.js user 1234567890
   node scripts/clear-cache.js stats
   node scripts/clear-cache.js maintenance
+  node scripts/clear-cache.js pm2-status
+  node scripts/clear-cache.js pm2-clean
         `);
         break;
     }
