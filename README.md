@@ -13,6 +13,34 @@ A clean and modular Node.js starter for WhatsApp Cloud API integration, using:
 - ✅ Phone number normalization
 - ✅ Bearer token authentication
 
+## 📋 Table of Contents
+
+- [WhatsApp Cloud Messaging (Node.js + Express 5)](#whatsapp-cloud-messaging-nodejs--express-5)
+  - [📋 Table of Contents](#-table-of-contents)
+  - [📁 Folder Structure](#-folder-structure)
+  - [🚀 Getting Started](#-getting-started)
+    - [1. Install Dependencies](#1-install-dependencies)
+    - [2. Environment Variables](#2-environment-variables)
+    - [3. Run the App](#3-run-the-app)
+    - [4. PM2 Process Management (Production)](#4-pm2-process-management-production)
+    - [PM2 Usage Examples](#pm2-usage-examples)
+  - [🧪 Testing](#-testing)
+  - [📫 API Endpoints](#-api-endpoints)
+    - [✅ Webhook Verification (Public)](#-webhook-verification-public)
+    - [📥 Webhook Receive (Public)](#-webhook-receive-public)
+    - [✉️ Send Message (Protected)](#️-send-message-protected)
+    - [📊 Message Logs (Protected)](#-message-logs-protected)
+  - [🔒 Authentication](#-authentication)
+  - [🔄 Message Logging Features](#-message-logging-features)
+  - [🗑️ Cache Management](#️-cache-management)
+    - [Quick Start](#quick-start)
+    - [Key Features](#key-features)
+  - [✅ GitHub Actions](#-github-actions)
+  - [🧱 Built With](#-built-with)
+  - [📌 TODOs](#-todos)
+  - [🗺️ Conversation Flows](#️-conversation-flows)
+  - [License](#license)
+
 ---
 
 ## 📁 Folder Structure
@@ -21,11 +49,21 @@ A clean and modular Node.js starter for WhatsApp Cloud API integration, using:
 src/
   ├── config/       # DB connection
   ├── lib/          # Shared utilities
+  │   ├── cacheManager.js  # Cache management utilities
+  │   └── stateUtils.js    # State management helpers
   ├── middleware/   # Express middleware
   ├── messages/     # WhatsApp messaging logic
   ├── models/       # Database models
   ├── webhook/      # Incoming & verification logic
+  ├── flows/        # Conversation flow handlers
+  │   ├── quote/    # Quote request flow
+  │   └── driver/   # Driver application flow
+  ├── queue/        # Message processing queue
+  ├── leads/        # User state management
   └── server.js     # Main app
+
+scripts/
+  └── clear-cache.js  # Cache management CLI tool
 ```
 
 ---
@@ -61,6 +99,97 @@ Or in production:
 
 ```bash
 npm start
+```
+
+### 4. PM2 Process Management (Production)
+
+For production deployment, use PM2 to manage the server and worker processes with integrated cache management:
+
+```bash
+# Install PM2 globally (if not already installed)
+npm install -g pm2
+
+# Start all processes (including scheduled maintenance)
+pm2 start ecosystem.config.cjs
+
+# View running processes
+pm2 status
+
+# View logs
+pm2 logs
+
+# Monitor resources
+pm2 monit
+
+# Restart all processes (with automatic cache clearing)
+pm2 restart all
+
+# Stop all processes
+pm2 stop all
+
+# Delete all processes
+pm2 delete all
+
+# Save PM2 configuration
+pm2 save
+
+# Setup PM2 to start on system boot
+pm2 startup
+
+# Deploy to production (with cache clearing)
+pm2 deploy production setup  # First time
+pm2 deploy production        # Deploy updates
+
+# View specific process logs
+pm2 logs cache_maintenance
+pm2 logs whatsapp_api
+pm2 logs whatsapp_worker
+
+# Check PM2 and cache status
+node scripts/clear-cache.js pm2-status
+
+# Clean restart (clear caches and restart)
+node scripts/clear-cache.js pm2-clean
+```
+
+**PM2 Configuration:**
+
+- `whatsapp_api`: Express server (port 3000)
+- `whatsapp_worker`: Message processing worker
+- `cache_maintenance`: Daily cache maintenance at 2 AM
+- `cache_cleanup`: Weekly cleanup at 3 AM Sundays
+- Auto-restart on crashes with cache management
+- Memory limit: 1GB per process (512MB for maintenance)
+- Logs stored in `./logs/` directory
+- **PM2 Hooks**: Automatic cache clearing on restarts and deployments
+- **Graceful Restarts**: Preserves user states during restarts
+- **Deployment Integration**: Cache management for deployments
+- **Scheduled Maintenance**: Automatic daily/weekly cache cleanup
+
+### PM2 Usage Examples
+
+```bash
+# Process Management
+pm2 start ecosystem.config.cjs          # Start all processes
+pm2 restart all                         # Restart with cache clearing
+pm2 stop all                           # Stop all processes
+pm2 delete all                         # Remove from PM2
+
+# Deployment
+pm2 deploy production setup            # Initial setup
+pm2 deploy production                  # Deploy updates
+pm2 deploy production revert 1         # Rollback
+
+# Monitoring
+pm2 status                             # View process status
+pm2 monit                              # Monitor resources
+pm2 logs                               # View all logs
+pm2 logs cache_maintenance             # View maintenance logs
+
+# Specific Process Control
+pm2 restart whatsapp_api               # Restart API only
+pm2 logs whatsapp_worker --follow      # Follow worker logs
+pm2 describe cache_maintenance         # View maintenance schedule
 ```
 
 ---
@@ -180,6 +309,49 @@ The token is configured via the `API_TOKEN` environment variable.
 
 ---
 
+## 🗑️ Cache Management
+
+The application includes comprehensive cache management tools for Redis-based state storage and memory optimization. This system provides CLI tools, programmatic APIs, and automated maintenance capabilities.
+
+**📖 [View Complete Cache Management Documentation →](docs/cache-management.md)**
+
+### Quick Start
+
+```bash
+# View cache statistics
+node scripts/clear-cache.js stats
+
+# Clear all caches
+node scripts/clear-cache.js all
+
+# Clear old data (24+ hours)
+node scripts/clear-cache.js old
+
+# Clear specific user
+node scripts/clear-cache.js user 27xxxxxxxxx
+
+# Perform maintenance
+node scripts/clear-cache.js maintenance
+
+# PM2 status and cache info
+node scripts/clear-cache.js pm2-status
+
+# View maintenance logs
+pm2 logs cache_maintenance
+tail -f ./logs/cache-maintenance-combined.log
+```
+
+### Key Features
+
+- ✅ **CLI Interface**: Easy command-line cache management
+- ✅ **Programmatic API**: `CacheManager` class for integration
+- ✅ **Memory Monitoring**: Real-time statistics and analytics
+- ✅ **Automated Maintenance**: Scheduled cleanup and optimization
+- ✅ **Selective Clearing**: User-specific and time-based clearing
+- ✅ **Emergency Recovery**: Complete system reset capabilities
+
+---
+
 ## ✅ GitHub Actions
 
 CI runs on every push to `main`. It checks:
@@ -196,6 +368,7 @@ CI runs on every push to `main`. It checks:
 - Express 5
 - MongoDB + Mongoose
 - Native fetch API
+- PM2 (Process Manager)
 - Vitest
 - GitHub Actions
 
@@ -208,6 +381,17 @@ CI runs on every push to `main`. It checks:
 - [ ] Add user message replies
 - [ ] Add message search functionality
 - [ ] Add date range filtering for messages
+
+## 🗺️ Conversation Flows
+
+This project features two main WhatsApp flows:
+
+- **Quote Flow**: Users can request a moving quote, view their quotes, or cancel a quote. [See full flow documentation →](docs/quote-flow.md)
+- **Driver Application Flow**: Drivers can register, check their application status, and manage their profile. [See full flow documentation →](docs/driver-flow.md)
+
+Each flow is fully documented with diagrams and step-by-step breakdowns in the linked files.
+
+- The previous inlined diagrams have been removed for clarity. See the linked documentation files for full details.
 
 ---
 

@@ -11,10 +11,13 @@ dotenv.config();
 connectDB();
 
 const app = express();
+app.set("trust proxy", 1); // Trust first proxy
 const webhookLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 min
   max: 10, // limit to 10 requests per min
   message: "Too many webhook requests",
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 app.use(express.json());
 
