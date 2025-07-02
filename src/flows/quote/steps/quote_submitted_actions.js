@@ -2,10 +2,10 @@ import { sendText } from "../../../lib/messages.js";
 import main_menu from "./main_menu.js";
 
 export default async function quote_submitted_actions(msg, state) {
-  if (!msg.text || !["1", "2"].includes((msg.text || "").trim())) {
+  if (!msg.text || !["1", "2", "3"].includes((msg.text || "").trim())) {
     await sendText({
       phone: msg.phone,
-      text: "What would you like to do next?\n\n1️⃣ Submit another quote\n2️⃣ Back to main menu\n\nReply with 1 or 2.",
+      text: "What would you like to do next?\n\n1️⃣ *Submit Another Quote* - Start a new request\n2️⃣ *View My Quote* - See your submitted quote\n3️⃣ *Main Menu* - Back to main options\n\nReply with *1*, *2*, or *3*",
     });
     return state;
   }
@@ -15,14 +15,18 @@ export default async function quote_submitted_actions(msg, state) {
       state = { step: "awaiting_from", lead: {} };
       await sendText({
         phone: msg.phone,
-        text: "Let's start a new quote! Where are you moving from?",
+        text: "🚚 Awesome! Let's create another quote for you!\n\nWhere are you moving *from*? 📍",
       });
       break;
     case "2":
+      // View the most recent quote
+      state = { step: "view_recent_quote" };
+      break;
+    case "3":
       state = { step: "main_menu" };
       await sendText({
         phone: msg.phone,
-        text: "Returning to main menu..., enter OK or 👍 to proceed",
+        text: "🏠 Taking you back to the main menu...\n\nReply with *OK* or 👍 to continue! 👋",
       });
       // Immediately render the main menu
       await main_menu({ ...msg, text: "" }, state);
@@ -30,7 +34,7 @@ export default async function quote_submitted_actions(msg, state) {
     default:
       await sendText({
         phone: msg.phone,
-        text: "What would you like to do next?\n\n1️⃣ Submit another quote\n2️⃣ Back to main menu\n\nReply with 1 or 2.",
+        text: "What would you like to do next?\n\n1️⃣ *Submit Another Quote* - Start a new request\n2️⃣ *View My Quote* - See your submitted quote\n3️⃣ *Main Menu* - Back to main options\n\nReply with *1*, *2*, or *3*",
       });
       break;
   }

@@ -57,7 +57,7 @@ export default async function quote_submitted_menu(msg, state) {
 
     await sendText({
       phone: msg.phone,
-      text: `${thankYouMessage}\n\nWhat would you like to do next?\n\n1️⃣ *Submit Another Quote* - Start a new request\n2️⃣ *Main Menu* - Back to main options\n\nReply with *1* or *2*`,
+      text: `${thankYouMessage}\n\nWhat would you like to do next?\n\n1️⃣ *Submit Another Quote* - Start a new request\n2️⃣ *View My Quote* - See your submitted quote\n3️⃣ *Main Menu* - Back to main options\n\nReply with *1*, *2*, or *3*`,
     });
     return updateState(state, { step: "quote_submitted_actions" });
   }

@@ -2,7 +2,7 @@ import { sendText } from "../../../lib/messages.js";
 import { updateState } from "../../../lib/stateUtils.js";
 
 const menu =
-  "🚛 *Join the MoveMate Team!* 👨‍💼\n\n" +
+  "🚛 *Join the Bubakii Team!* 👨‍💼\n\n" +
   "Ready to be part of something great? We're building the best moving team in South Africa! 🇿🇦\n\n" +
   "📝 *1️⃣ Start Application* - Begin your journey with us\n" +
   "📊 *2️⃣ Check My Status* - See how your application is doing\n" +
@@ -14,7 +14,7 @@ export default async function driver_menu(msg, state) {
     case "1":
       await sendText({
         phone: msg.phone,
-        text: "🎉 Fantastic! Let's get you started on your journey with MoveMate!\n\nFirst, I need to know your full name. What should I call you? 😊",
+        text: "🎉 Fantastic! Let's get you started on your journey with Bubakii!\n\nFirst, I need to know your full name. What should I call you? 😊",
       });
       return updateState(state, { step: "awaiting_name", driver: {} });
     case "2":

@@ -16,6 +16,8 @@ import quote_submitted_menu from "./steps/quote_submitted_menu.js";
 import awaiting_feedback_comment from "./steps/awaiting_feedback_comment.js";
 import quote_submitted_actions from "./steps/quote_submitted_actions.js";
 import my_quotes_list from "./steps/my_quotes_list.js";
+import view_recent_quote from "./steps/view_recent_quote.js";
+import view_recent_quote_actions from "./steps/view_recent_quote_actions.js";
 
 const handlers = {
   main_menu,
@@ -36,6 +38,8 @@ const handlers = {
   awaiting_feedback_comment,
   quote_submitted_actions,
   my_quotes_list,
+  view_recent_quote,
+  view_recent_quote_actions,
 };
 
 export function getStepHandler(step) {

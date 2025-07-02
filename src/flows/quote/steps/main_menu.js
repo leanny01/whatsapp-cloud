@@ -3,7 +3,7 @@ import { getUserQuotes } from "../service.js";
 import { updateState } from "../../../lib/stateUtils.js";
 
 const mainMenu =
-  "👋 *Welcome to MoveMate!* 🚚\n\n" +
+  "👋 *Welcome to Bubakii!* 🚚\n\n" +
   "I'm here to help you with all your moving needs! What would you like to do today?\n\n" +
   "📋 *1️⃣ Get a Moving Quote* - Let's find you the best price!\n" +
   "📊 *2️⃣ Check My Quotes* - See your previous requests\n" +
