@@ -36,7 +36,12 @@ export function getStepHandler(step) {
   }
 
   // Check if this is a driver step by looking for driver-specific prefixes
-  if (step.startsWith("driver_") || step === "review_driver") {
+  if (
+    step.startsWith("driver_") ||
+    step === "review_driver" ||
+    step === "driver_status" ||
+    step === "driver_status_menu"
+  ) {
     return getDriverStepHandler(step);
   }
 
