@@ -12,7 +12,7 @@ export default async function awaiting_team(msg, state) {
   }
   await sendText({
     phone: msg.phone,
-    text: "What routes or areas do you often work on? (List or describe)",
+    text: "🚛 *Routes & Areas*\n\nWhich routes or areas do you often work on? This helps us match you with the right jobs!\n\n*Examples:*\n• *Gauteng:* Johannesburg CBD, Sandton, Pretoria East, Midrand\n• *Western Cape:* Cape Town CBD, Bellville, Durbanville, Table View\n• *KZN:* Durban CBD, Umhlanga, Ballito, Westville\n• *Inter-city:* JHB ↔ CPT, JHB ↔ DBN, CPT ↔ PE\n\nJust list the areas you know well, separated by commas! 📍",
   });
   return updateState(state, {
     step: "awaiting_routes",
